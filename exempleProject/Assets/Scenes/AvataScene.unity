@@ -476,8 +476,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb98c7e5ba77f1948bb7d664e6ef89df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pathToCurrentFolder: Assets/polyperfect/Low Poly Animated People/- Prefabs
-  avatars: []
 --- !u!4 &92170272
 Transform:
   m_ObjectHideFlags: 0
@@ -5970,8 +5968,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uC544\uBC14\uD0C0 \uC120\uD0DD"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 81ceadbf1dcca0549808d692ea63d298, type: 2}
-  m_sharedMaterial: {fileID: -8486686394372154791, guid: 81ceadbf1dcca0549808d692ea63d298, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 7940a569229d99041824b8307f754d60, type: 2}
+  m_sharedMaterial: {fileID: -4893223283534246235, guid: 7940a569229d99041824b8307f754d60, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -5990,7 +5988,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: -1183493901
+  m_TextStyleHashCode: 2427
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
