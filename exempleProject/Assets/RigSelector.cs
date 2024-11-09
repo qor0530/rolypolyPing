@@ -6,7 +6,7 @@ public class RigSelector : MonoBehaviour
 {
     public GameObject mainRig; // _MainRig 오브젝트를 드래그해서 할당
     public GameObject checkboxPrefab; // 체크박스 프리팹 (Toggle을 체크박스처럼 사용)
-    public Transform checkboxContainer; // 체크박스들이 배치될 부모 컨테이너
+    public Transform checkboxContainer; // Scroll View의 Content를 설정 (Checkbox들이 배치될 부모 컨테이너)
 
     private List<Transform> rigObjects = new List<Transform>(); // Geometry 하위의 리깅 오브젝트 리스트
     private Transform geometry;
