@@ -67,6 +67,6 @@ public class MusicSelector : MonoBehaviour
         PlayerPrefs.SetInt("SelectedMusicIndex", currentIndex); // 선택된 음악 인덱스를 저장
         PlayerPrefs.Save();
 
-        SceneManager.LoadScene("FrameCheckScene");
+        SceneManager.LoadScene("GameScene");
     }
 }
