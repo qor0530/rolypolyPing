@@ -1,17 +1,16 @@
-using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using UnityEngine;
+using Newtonsoft.Json;
 
 public class UDPReceiver : MonoBehaviour
 {
     private UdpClient udpClient;
     private Thread receiveThread;
     public int port = 25712;
-
 
     void Start()
     {
@@ -40,7 +39,7 @@ public class UDPReceiver : MonoBehaviour
                 ParseJsonData(message);
             }
         }
-        catch (Exception e)
+        catch (System.Exception e)
         {
             Debug.LogError($"UDP 수신 중 오류 발생: {e.Message}");
         }
@@ -50,21 +49,25 @@ public class UDPReceiver : MonoBehaviour
     {
         try
         {
-            // JSON 파싱
-            var parsedData = JsonUtility.FromJson<Wrapper>(jsonData);
-
+            // Newtonsoft.Json 사용하여 파싱
+            var parsedData = JsonConvert.DeserializeObject<Wrapper>(jsonData);
 
             // 데이터 처리
             foreach (var user in parsedData.data)
             {
                 Debug.Log(user.score);
-                Debug.Log(user.coord_3d);
 
-
+                if (user.coord_3d != null && user.coord_3d.Count > 0)
+                {
+                    Debug.Log($"coord_3d 첫 번째 값: {user.coord_3d[0][0]}, {user.coord_3d[0][1]}, {user.coord_3d[0][2]}");
+                }
+                else
+                {
+                    Debug.Log("coord_3d 리스트가 비어 있거나 null입니다.");
+                }
             }
-
         }
-        catch (Exception e)
+        catch (System.Exception e)
         {
             Debug.LogError($"JSON 파싱 중 오류 발생: {e.Message}");
         }
@@ -76,16 +79,16 @@ public class UDPReceiver : MonoBehaviour
         udpClient.Close();
     }
 
-    [Serializable]
+    [System.Serializable]
     public class Wrapper
     {
         public List<User> data;
     }
 
-    [Serializable]
+    [System.Serializable]
     public class User
     {
         public float score;
-        public List<List<float>> coord_3d;
+        public List<List<float>> coord_3d; // 2D 리스트
     }
 }
