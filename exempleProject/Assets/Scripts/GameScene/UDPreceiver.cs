@@ -12,9 +12,28 @@ public class UDPReceiver : MonoBehaviour
     private Thread receiveThread;
     public int port = 25712;
 
+    // Singleton 인스턴스
+    public static UDPReceiver Instance { get; private set; }
+
+    // 저장된 데이터를 외부에서 접근 가능하도록
+    public List<List<float>> LatestCoord3D { get; private set; } = new List<List<float>>();
+
+    void Awake()
+    {
+        // Singleton 초기화
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject); // 다른 씬으로 넘어가도 유지
+        }
+        else
+        {
+            Destroy(gameObject); // Singleton 중복 방지
+        }
+    }
+
     void Start()
     {
-        // UDP 클라이언트 초기화
         udpClient = new UdpClient(port);
         receiveThread = new Thread(new ThreadStart(ReceiveData));
         receiveThread.IsBackground = true;
@@ -30,12 +49,10 @@ public class UDPReceiver : MonoBehaviour
         {
             while (true)
             {
-                // 데이터 수신
                 byte[] data = udpClient.Receive(ref remoteEndPoint);
                 string message = Encoding.UTF8.GetString(data);
                 Debug.Log($"수신 데이터: {message}");
 
-                // JSON 파싱
                 ParseJsonData(message);
             }
         }
@@ -49,21 +66,19 @@ public class UDPReceiver : MonoBehaviour
     {
         try
         {
-            // Newtonsoft.Json 사용하여 파싱
             var parsedData = JsonConvert.DeserializeObject<Wrapper>(jsonData);
 
-            // 데이터 처리
             foreach (var user in parsedData.data)
             {
-                Debug.Log(user.score);
-
-                if (user.coord_3d != null && user.coord_3d.Count > 0)
+                if (user.coord_3d != null && user.coord_3d.Count == 33)
                 {
-                    Debug.Log($"coord_3d 첫 번째 값: {user.coord_3d[0][0]}, {user.coord_3d[0][1]}, {user.coord_3d[0][2]}");
+                    // 최신 데이터를 저장
+                    LatestCoord3D = user.coord_3d;
+                    Debug.Log("데이터가 업데이트되었습니다.");
                 }
                 else
                 {
-                    Debug.Log("coord_3d 리스트가 비어 있거나 null입니다.");
+                    Debug.LogWarning("coord_3d 데이터가 부족하거나 null입니다.");
                 }
             }
         }
