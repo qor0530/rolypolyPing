@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI; // UI 관련 네임스페이스s
+using UnityEngine.UI; // UI 관련 네임스페이스
 using UnityEngine.SceneManagement; // 씬 전환을 위한 네임스페이스
 
 public class GameManager : MonoBehaviour
