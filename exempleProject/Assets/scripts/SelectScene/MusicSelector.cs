@@ -16,7 +16,7 @@ public class MusicSelector : MonoBehaviour
     public Image displayImage;
 
     // 텍스트를 표시할 UI Text
-    public TextMeshProUGUI displayTitle; 
+    public TextMeshProUGUI displayTitle;
 
 
 

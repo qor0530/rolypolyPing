@@ -675,7 +675,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: c43b736bf8e044ac8a3daeeb8bc0023d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: c0e6b0bb1bd1c45bbbc07bc75fad6a2f, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1559,7 +1559,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: c43b736bf8e044ac8a3daeeb8bc0023d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: c0e6b0bb1bd1c45bbbc07bc75fad6a2f, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1625,7 +1625,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 50, y: -4}
-  m_SizeDelta: {x: 178.4436, y: 33.5091}
+  m_SizeDelta: {x: 400, y: 33.5091}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1757073892
 MonoBehaviour:
@@ -1966,7 +1966,12 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 5b0f64b6866cb4f22aeca943a70ce281, type: 3}
   - {fileID: 21300000, guid: 16148438d30b94449a47636bd92b3cd9, type: 3}
   - {fileID: 21300000, guid: 49ecadae04438468782fc7905096e3b2, type: 3}
-  displayImage: {fileID: 0}
+  thumbnailTitles:
+  - IDOL - YOASOBI
+  - "???? - \uB775\uB775\uB545\uB545\uB775"
+  - AESPA - SUPERNOVA
+  displayImage: {fileID: 132432975}
+  displayTitle: {fileID: 1757073892}
   leftArrowButton: {fileID: 897227734}
   rightArrowButton: {fileID: 1160408612}
   thumbnailButton: {fileID: 2126045232}
