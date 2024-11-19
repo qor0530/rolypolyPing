@@ -2,15 +2,24 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using TMPro;
 
 public class MusicSelector : MonoBehaviour
 {
     // 썸네일 이미지 리스트 (유니티 에디터에서 추가 가능)
     public List<Sprite> thumbnailList;
-    
+
+    // 썸네일에 맞는 텍스트 리스트
+    public List<string> thumbnailTitles;
+
     // 썸네일을 표시할 UI Image
     public Image displayImage;
-    
+
+    // 텍스트를 표시할 UI Text
+    public TextMeshProUGUI displayTitle; 
+
+
+
     // 좌우 화살표 버튼
     public Button leftArrowButton;
     public Button rightArrowButton;
@@ -58,6 +67,16 @@ public class MusicSelector : MonoBehaviour
         if (thumbnailList.Count > 0)
         {
             displayImage.sprite = thumbnailList[currentIndex];
+
+            // 썸네일에 맞는 텍스트 업데이트
+            if (thumbnailTitles.Count > currentIndex)
+            {
+                displayTitle.text = thumbnailTitles[currentIndex];
+            }
+            else
+            {
+                displayTitle.text = "No Title"; // 제목이 없는 경우 기본 텍스트
+            }
         }
     }
 
