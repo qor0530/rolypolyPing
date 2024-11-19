@@ -17,7 +17,9 @@ public class UDPReceiver : MonoBehaviour
 
     // 저장된 데이터를 외부에서 접근 가능하도록
     public List<List<float>> LatestCoord3D { get; private set; } = new List<List<float>>();
-
+    // 최신 점수 저장   
+    public float LatestScore { get; private set; }
+    
     void Awake()
     {
         // Singleton 초기화
@@ -74,6 +76,8 @@ public class UDPReceiver : MonoBehaviour
                 {
                     // 최신 데이터를 저장
                     LatestCoord3D = user.coord_3d;
+                    // 최신 점수 저장
+                    LatestScore = user.score;
                     Debug.Log("데이터가 업데이트되었습니다.");
                 }
                 else
