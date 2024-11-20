@@ -32,6 +32,8 @@ public class MusicSelector : MonoBehaviour
 
     void Start()
     {
+        string basePath = "/Users/jeongsieun/Fiction-Royals-Merge/Fiction-Royals/db";
+
         // 좌우 화살표 버튼에 이벤트 연결
         leftArrowButton.onClick.AddListener(() => ChangeThumbnail(-1));
         rightArrowButton.onClick.AddListener(() => ChangeThumbnail(1));
