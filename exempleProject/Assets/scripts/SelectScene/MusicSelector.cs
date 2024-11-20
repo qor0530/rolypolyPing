@@ -73,7 +73,10 @@ public class MusicSelector : MonoBehaviour
         shortButton.onClick.AddListener(() => { SwitchCategory(false); PlayMusic(); });
         leftArrowButton.onClick.AddListener(() => ChangeThumbnail(-1));
         rightArrowButton.onClick.AddListener(() => ChangeThumbnail(1));
+        thumbnailButton.onClick.AddListener(StartGame);
     }
+    //play버튼 연결
+    
     
 
     private System.Collections.IEnumerator ClassifyMusicFiles(System.Action onComplete)
@@ -203,5 +206,16 @@ public class MusicSelector : MonoBehaviour
                 Debug.LogError("오디오 파일 로드 실패: " + uwr.error);
             }
         }
+    }
+    // play 버튼 연결
+    private void StartGame()
+    {
+        // 선택된 음악 정보를 저장
+        PlayerPrefs.SetInt("SelectedMusicIndex", currentIndex);
+        PlayerPrefs.SetString("SelectedMusicPath", isLong ? longFilePaths[currentIndex] : shortFilePaths[currentIndex]);
+        PlayerPrefs.Save();
+
+        // GameScene으로 전환
+        SceneManager.LoadScene("GameScene");
     }
 }
