@@ -1,93 +1,207 @@
+using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using TMPro;
+using UnityEngine.Networking;
 
 public class MusicSelector : MonoBehaviour
 {
-    // 썸네일 이미지 리스트 (유니티 에디터에서 추가 가능)
-    public List<Sprite> thumbnailList;
+    public List<Sprite> thumbnailList; // 썸네일 이미지 리스트
+    public List<string> thumbnailTitles; // 썸네일에 맞는 텍스트 리스트
+    public Image displayImage; // UI Image
+    public TextMeshProUGUI displayTitle; // UI 텍스트
+    public Button leftArrowButton; // 좌 화살표 버튼
+    public Button rightArrowButton; // 우 화살표 버튼
+    public Button thumbnailButton; // 썸네일 버튼
+    public Button longButton; // Long 버튼
+    public Button shortButton; // Short 버튼
+    public AudioSource audioSource; // AudioSource 컴포넌트
 
-    // 썸네일에 맞는 텍스트 리스트
-    public List<string> thumbnailTitles;
+    private int currentIndex = 0; // 현재 인덱스
+    private List<string> musicFilePaths = new List<string>(); // 모든 음악 파일 경로 리스트
+    private List<Sprite> longThumbnails = new List<Sprite>(); // 1분 이상 썸네일
+    private List<string> longTitles = new List<string>(); // 1분 이상 제목
+    private List<string> longFilePaths = new List<string>(); // 1분 이상 음악 경로
+    private List<Sprite> shortThumbnails = new List<Sprite>(); // 1분 이하 썸네일
+    private List<string> shortTitles = new List<string>(); // 1분 이하 제목
+    private List<string> shortFilePaths = new List<string>(); // 1분 이하 음악 경로
+    private bool isLong = true; // Long 버튼 클릭 여부
 
-    // 썸네일을 표시할 UI Image
-    public Image displayImage;
-
-    // 텍스트를 표시할 UI Text
-    public TextMeshProUGUI displayTitle;
-
-
-
-    // 좌우 화살표 버튼
-    public Button leftArrowButton;
-    public Button rightArrowButton;
-
-    // 현재 선택된 썸네일 인덱스
-    private int currentIndex = 0;
-
-    // 선택된 썸네일을 클릭하면 씬 이동을 할 수 있도록 Button으로 참조
-    public Button thumbnailButton;
-
-    void Start()
+    private void Start()
     {
         string basePath = "/Users/jeongsieun/Fiction-Royals-Merge/Fiction-Royals/db";
 
-        // 좌우 화살표 버튼에 이벤트 연결
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
+
+        // 음악 파일 경로 가져오기
+        if (Directory.Exists(basePath))
+        {
+            string[] mp3Files = Directory.GetFiles(basePath, "*.mp3", SearchOption.AllDirectories);
+            foreach (string file in mp3Files)
+            {
+                musicFilePaths.Add(file);
+            }
+        }
+        else
+        {
+            Debug.LogError("경로를 찾을 수 없습니다: " + basePath);
+        }
+
+        if (musicFilePaths.Count == 0)
+        {
+            Debug.LogError("MP3 파일이 발견되지 않았습니다.");
+            return;
+        }
+
+
+        // 음악 길이에 따라 분류
+        StartCoroutine(ClassifyMusicFiles(() =>
+        {
+            isLong = true;
+            currentIndex = 0;
+            UpdateThumbnail();
+            PlayMusic();
+        }));
+
+        // 버튼 이벤트 연결
+        longButton.onClick.AddListener(() => { SwitchCategory(true); PlayMusic(); });
+        shortButton.onClick.AddListener(() => { SwitchCategory(false); PlayMusic(); });
         leftArrowButton.onClick.AddListener(() => ChangeThumbnail(-1));
         rightArrowButton.onClick.AddListener(() => ChangeThumbnail(1));
-
-        // 썸네일 클릭 시 음악을 선택하고 씬 전환
-        thumbnailButton.onClick.AddListener(SelectMusic);
-
-        // 첫 번째 썸네일을 보여줌
-        UpdateThumbnail();
     }
+    
 
-    // 썸네일을 변경하는 함수
-    void ChangeThumbnail(int direction)
+    private System.Collections.IEnumerator ClassifyMusicFiles(System.Action onComplete)
     {
-        // 인덱스 업데이트 (리스트의 크기를 넘지 않도록 처리)
-        currentIndex += direction;
-        if (currentIndex < 0)
+        foreach (string path in musicFilePaths)
         {
-            currentIndex = thumbnailList.Count - 1;
-        }
-        else if (currentIndex >= thumbnailList.Count)
-        {
-            currentIndex = 0;
-        }
-
-        // 썸네일을 업데이트
-        UpdateThumbnail();
-    }
-
-    // 현재 인덱스에 맞는 썸네일을 화면에 표시
-    void UpdateThumbnail()
-    {
-        if (thumbnailList.Count > 0)
-        {
-            displayImage.sprite = thumbnailList[currentIndex];
-
-            // 썸네일에 맞는 텍스트 업데이트
-            if (thumbnailTitles.Count > currentIndex)
+            using (UnityWebRequest uwr = UnityWebRequestMultimedia.GetAudioClip("file://" + path, AudioType.MPEG))
             {
-                displayTitle.text = thumbnailTitles[currentIndex];
+                yield return uwr.SendWebRequest();
+
+                if (uwr.result == UnityWebRequest.Result.Success)
+                {
+                    AudioClip clip = DownloadHandlerAudioClip.GetContent(uwr);
+                    float clipLength = clip.length; // 음악 길이 (초 단위)
+
+                    // 인덱스 확인
+                    int index = musicFilePaths.IndexOf(path);
+                    if (index != -1 && index < thumbnailList.Count && index < thumbnailTitles.Count)
+                    {
+                        if (clipLength > 60) // 1분 이상
+                        {
+                            longFilePaths.Add(path);
+                            longThumbnails.Add(thumbnailList[index]);
+                            longTitles.Add(thumbnailTitles[index]);
+                        }
+                        else // 1분 이하
+                        {
+                            shortFilePaths.Add(path);
+                            shortThumbnails.Add(thumbnailList[index]);
+                            shortTitles.Add(thumbnailTitles[index]);
+                        }
+                    }
+                    else
+                    {
+                        Debug.LogError($"유효하지 않은 인덱스: {index} (path: {path})");
+                    }
+                }
+                else
+                {
+                    Debug.LogError("오디오 파일 로드 실패: " + path);
+                }
+            }
+        }
+
+        onComplete?.Invoke(); // 분류 완료 후 초기화 호출
+    }
+
+    private void SwitchCategory(bool toLong)
+    {
+        isLong = toLong;
+        currentIndex = 0; // 첫 번째 노래로 초기화
+        UpdateThumbnail();
+    }
+
+    private void ChangeThumbnail(int direction)
+    {
+        currentIndex += direction;
+
+        if (isLong)
+        {
+            if (currentIndex < 0)
+                currentIndex = longThumbnails.Count - 1;
+            else if (currentIndex >= longThumbnails.Count)
+                currentIndex = 0;
+        }
+        else
+        {
+            if (currentIndex < 0)
+                currentIndex = shortThumbnails.Count - 1;
+            else if (currentIndex >= shortThumbnails.Count)
+                currentIndex = 0;
+        }
+
+        UpdateThumbnail();
+        PlayMusic();
+    }
+
+    private void UpdateThumbnail()
+    {
+        if (isLong && longThumbnails.Count > 0)
+        {
+            displayImage.sprite = longThumbnails[currentIndex];
+            displayTitle.text = longTitles[currentIndex];
+        }
+        else if (!isLong && shortThumbnails.Count > 0)
+        {
+            displayImage.sprite = shortThumbnails[currentIndex];
+            displayTitle.text = shortTitles[currentIndex];
+        }
+        else
+        {
+            Debug.LogWarning("유효한 썸네일이 없습니다.");
+        }
+    }
+
+    private void PlayMusic()
+    {
+        if (isLong && longFilePaths.Count > currentIndex)
+        {
+            string musicPath = longFilePaths[currentIndex];
+            StartCoroutine(LoadAudio(musicPath));
+        }
+        else if (!isLong && shortFilePaths.Count > currentIndex)
+        {
+            string musicPath = shortFilePaths[currentIndex];
+            StartCoroutine(LoadAudio(musicPath));
+        }
+        else
+        {
+            Debug.LogError("음악 파일이 존재하지 않거나 잘못된 인덱스입니다.");
+        }
+    }
+
+    private System.Collections.IEnumerator LoadAudio(string filePath)
+    {
+        using (UnityWebRequest uwr = UnityWebRequestMultimedia.GetAudioClip("file://" + filePath, AudioType.MPEG))
+        {
+            yield return uwr.SendWebRequest();
+
+            if (uwr.result == UnityWebRequest.Result.Success)
+            {
+                audioSource.clip = DownloadHandlerAudioClip.GetContent(uwr);
+                audioSource.Play();
             }
             else
             {
-                displayTitle.text = "No Title"; // 제목이 없는 경우 기본 텍스트
+                Debug.LogError("오디오 파일 로드 실패: " + uwr.error);
             }
         }
-    }
-
-    // 선택된 음악을 저장하고 게임을 시작할 수 있는 함수
-    public void SelectMusic()
-    {
-        PlayerPrefs.SetInt("SelectedMusicIndex", currentIndex); // 선택된 음악 인덱스를 저장
-        PlayerPrefs.Save();
-
-        SceneManager.LoadScene("GameScene");
     }
 }
