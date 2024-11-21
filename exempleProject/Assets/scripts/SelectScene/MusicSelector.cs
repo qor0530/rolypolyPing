@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine.Networking;
+using System;
 
 /// /////////////////// Short/Long 은 mp3 재생길이 1분 기준으로 분류
 
@@ -35,8 +36,13 @@ public class MusicSelector : MonoBehaviour
 
     private void Start()
     {
-        //경로 변경 필요
-        string basePath = "/Users/jeongsieun/Fiction-Royals-Merge/Fiction-Royals/db";
+        // string basePath = "/Users/jeongsieun/Fiction-Royals-Merge/Fiction-Royals/db";
+
+        string basePath = Path.Combine(Application.dataPath, "../../../../../Fiction-Royals-Merge/Fiction-Royals/db");
+
+        // 정규화된 경로 출력
+        Debug.Log("Base Path (Full): " + Path.GetFullPath(basePath));
+    
 
         if (audioSource == null)
         {
@@ -73,8 +79,8 @@ public class MusicSelector : MonoBehaviour
         rightArrowButton.onClick.AddListener(() => ChangeThumbnail(1));
         thumbnailButton.onClick.AddListener(StartGame);
     }
-    
-    
+
+
 
     private System.Collections.IEnumerator ClassifyMusicFiles(System.Action onComplete)
     {
