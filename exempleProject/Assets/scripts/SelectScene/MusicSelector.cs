@@ -6,31 +6,36 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine.Networking;
 
+/// /////////////////// Short/Long 은 mp3 재생길이 1분 기준으로 분류
+
 public class MusicSelector : MonoBehaviour
 {
-    public List<Sprite> thumbnailList; // 썸네일 이미지 리스트
-    public List<string> thumbnailTitles; // 썸네일에 맞는 텍스트 리스트
-    public Image displayImage; // UI Image
-    public TextMeshProUGUI displayTitle; // UI 텍스트
-    public Button leftArrowButton; // 좌 화살표 버튼
-    public Button rightArrowButton; // 우 화살표 버튼
-    public Button thumbnailButton; // 썸네일 버튼
-    public Button longButton; // Long 버튼
-    public Button shortButton; // Short 버튼
-    public AudioSource audioSource; // AudioSource 컴포넌트
+    public List<Sprite> thumbnailList; //썸네일 이미지 리스트
+    public List<string> thumbnailTitles; //썸네일에 맞는 타이틀 리스트
+    public Image displayImage; //UI Image
+    public TextMeshProUGUI displayTitle; //UI 텍스트
+    public Button leftArrowButton; //좌 화살표 버튼
+    public Button rightArrowButton; //우 화살표 버튼
+    public Button thumbnailButton; //play 버튼
+    public Button longButton; //Long 버튼
+    public Button shortButton; //Short 버튼
+    public AudioSource audioSource; //AudioSource 컴포넌트
 
-    private int currentIndex = 0; // 현재 인덱스
+    private int currentIndex = 0; //현재 인덱스
     private List<string> musicFilePaths = new List<string>(); // 모든 음악 파일 경로 리스트
+    //Long
     private List<Sprite> longThumbnails = new List<Sprite>(); // 1분 이상 썸네일
     private List<string> longTitles = new List<string>(); // 1분 이상 제목
     private List<string> longFilePaths = new List<string>(); // 1분 이상 음악 경로
+    //Short
     private List<Sprite> shortThumbnails = new List<Sprite>(); // 1분 이하 썸네일
     private List<string> shortTitles = new List<string>(); // 1분 이하 제목
     private List<string> shortFilePaths = new List<string>(); // 1분 이하 음악 경로
-    private bool isLong = true; // Long 버튼 클릭 여부
+    private bool isLong = true; // Long 탭일때 화면 시작
 
     private void Start()
     {
+        //경로 변경 필요
         string basePath = "/Users/jeongsieun/Fiction-Royals-Merge/Fiction-Royals/db";
 
         if (audioSource == null)
@@ -38,7 +43,7 @@ public class MusicSelector : MonoBehaviour
             audioSource = gameObject.AddComponent<AudioSource>();
         }
 
-        // 음악 파일 경로 가져오기
+        //음악 파일 경로 가져오기(mp3확장자로 된 파일만)
         if (Directory.Exists(basePath))
         {
             string[] mp3Files = Directory.GetFiles(basePath, "*.mp3", SearchOption.AllDirectories);
@@ -51,13 +56,6 @@ public class MusicSelector : MonoBehaviour
         {
             Debug.LogError("경로를 찾을 수 없습니다: " + basePath);
         }
-
-        if (musicFilePaths.Count == 0)
-        {
-            Debug.LogError("MP3 파일이 발견되지 않았습니다.");
-            return;
-        }
-
 
         // 음악 길이에 따라 분류
         StartCoroutine(ClassifyMusicFiles(() =>
@@ -75,7 +73,6 @@ public class MusicSelector : MonoBehaviour
         rightArrowButton.onClick.AddListener(() => ChangeThumbnail(1));
         thumbnailButton.onClick.AddListener(StartGame);
     }
-    //play버튼 연결
     
     
 
@@ -121,14 +118,14 @@ public class MusicSelector : MonoBehaviour
             }
         }
 
-        onComplete?.Invoke(); // 분류 완료 후 초기화 호출
+        onComplete?.Invoke(); // 분류 완료 후 초기화 호출 (onComplete 콜백 호출)
     }
 
     private void SwitchCategory(bool toLong)
     {
         isLong = toLong;
-        currentIndex = 0; // 첫 번째 노래로 초기화
-        UpdateThumbnail();
+        currentIndex = 0; //첫번째 노래로 초기화->첫번째 노래부터 시작하도록
+        UpdateThumbnail(); //UI갱신
     }
 
     private void ChangeThumbnail(int direction)
@@ -137,19 +134,19 @@ public class MusicSelector : MonoBehaviour
 
         if (isLong)
         {
-            if (currentIndex < 0)
+            if (currentIndex < 0) //인덱스가 음수가 되면 마지막 썸네일로 이동
                 currentIndex = longThumbnails.Count - 1;
             else if (currentIndex >= longThumbnails.Count)
                 currentIndex = 0;
         }
         else
         {
+            //short 일때
             if (currentIndex < 0)
                 currentIndex = shortThumbnails.Count - 1;
             else if (currentIndex >= shortThumbnails.Count)
                 currentIndex = 0;
         }
-
         UpdateThumbnail();
         PlayMusic();
     }
@@ -207,6 +204,7 @@ public class MusicSelector : MonoBehaviour
             }
         }
     }
+
     // play 버튼 연결
     private void StartGame()
     {
