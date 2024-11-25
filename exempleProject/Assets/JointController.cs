@@ -3,7 +3,26 @@ using UnityEngine;
 
 public class JointController : MonoBehaviour
 {
-    public List<Transform> joints; // Unity에서 사용하려는 본(관절) Transform
+    public int avata_id;
+    public GameObject me;
+    private List<GameObject> joints;
+    void Start()
+    {
+        // 현재 게임오브젝트의 모든 자식 게임오브젝트 가져오기
+        joints = GetAllChildGameObjects(me);
+    }
+    // 모든 자식 게임오브젝트를 재귀적으로 가져오는 함수
+    List<GameObject> GetAllChildGameObjects(GameObject parent)
+    {
+        List<GameObject> gameObjects = new List<GameObject>();
+
+        foreach (Transform child in parent.transform)
+        {
+            gameObjects.Add(child.gameObject); // 게임오브젝트 추가
+        }
+
+        return gameObjects;
+    }
     private int[] mappedLandmarks =
     {
         0,   // 머리
@@ -22,22 +41,38 @@ public class JointController : MonoBehaviour
     };
     void Update()
     {
-        if (UDPReceiver.Instance != null && UDPReceiver.Instance.LatestCoord3D.Count >= mappedLandmarks.Length)
+        if (UDPReceiver.Instance != null)
         {
-            var coord3D = UDPReceiver.Instance.LatestCoord3D;
-
-            for (int i = 0; i < mappedLandmarks.Length; i++)
+            try
             {
-                int landmarkIndex = mappedLandmarks[i];
-                var positionData = coord3D[landmarkIndex];
-
-                // 좌표 변환 및 스케일 조정
-                joints[i].localPosition = ConvertToUnityCoords(new Vector3(
-                    positionData[0], positionData[1], positionData[2]
+                var coord3D = UDPReceiver.Instance.LatestCoord3Ds[avata_id];    
+                for (int i = 0; i < 33; i++)
+            {
+                var positionData = coord3D[i];
+                if (i == 0) {
+                        joints[i].transform.localPosition = ConvertToUnityCoords(new Vector3(
+                       positionData[0], positionData[1], positionData[2] + 1.0f
+                    ));
+                    }
+                else
+                    {
+                //좌표 변환 및 스케일 조정
+                joints[i].transform.localPosition = ConvertToUnityCoords(new Vector3(
+                   positionData[0], positionData[1], positionData[2]
                 ));
-            }
+                    }
 
-            Debug.Log("특정 본 업데이트 완료");
+            }
+            }
+            catch
+            {
+                Debug.Log("coord3D에 자료 X");
+            }
+            
+        }
+        else
+        {
+            Debug.Log("UDPReciver.Instance가 null");
         }
     }
 

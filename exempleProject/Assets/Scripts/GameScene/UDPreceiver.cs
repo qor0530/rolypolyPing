@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using UnityEngine;
 using Newtonsoft.Json;
+using static UDPReceiver;
 
 public class UDPReceiver : MonoBehaviour
 {
@@ -16,10 +17,10 @@ public class UDPReceiver : MonoBehaviour
     public static UDPReceiver Instance { get; private set; }
 
     // 저장된 데이터를 외부에서 접근 가능하도록
-    public List<List<float>> LatestCoord3D { get; private set; } = new List<List<float>>();
+    public List<List<List<float>>> LatestCoord3Ds { get; private set; } = new List<List<List<float>>>();
     // 최신 점수 저장   
-    public float LatestScore { get; private set; }
-    
+    public List<float> LatestScores { get; private set; } = new List<float>();
+
     void Awake()
     {
         // Singleton 초기화
@@ -69,16 +70,18 @@ public class UDPReceiver : MonoBehaviour
         try
         {
             var parsedData = JsonConvert.DeserializeObject<Wrapper>(jsonData);
-
+            // 최신 데이터를 저장
+            LatestCoord3Ds.Clear();
+            // 최신 점수 저장
+            LatestScores.Clear();
             foreach (var user in parsedData.data)
             {
                 if (user.coord_3d != null && user.coord_3d.Count == 33)
                 {
                     // 최신 데이터를 저장
-                    LatestCoord3D = user.coord_3d;
+                    LatestCoord3Ds.Add(user.coord_3d);
                     // 최신 점수 저장
-                    LatestScore = user.score;
-                    Debug.Log("데이터가 업데이트되었습니다.");
+                    LatestScores.Add(user.score);
                 }
                 else
                 {

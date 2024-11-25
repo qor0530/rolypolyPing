@@ -111,15 +111,12 @@ public class GameManager : MonoBehaviour
             // scores.Clear(); // ���ο� 3�� ������ ���� ����Ʈ �ʱ�ȭ
 
             // UDPReceiver���� �ֽ� ���� ��������
-            if (UDPReceiver.Instance != null && UDPReceiver.Instance.LatestCoord3D != null)
+            if (UDPReceiver.Instance != null && UDPReceiver.Instance.LatestCoord3Ds.Count != 0)
             {
-                float latestScore = UDPReceiver.Instance.LatestScore;
-                // ������ ����Ʈ�� �߰����� �ʰ� �ٷ� ����
+                float latestScore = UDPReceiver.Instance.LatestScores[1];
+                scores.Add(latestScore);
                 totalScore += latestScore;
                 totalScoreCount++;
-
-                // scores.Add(latestScore);
-                // totalScore += latestScore;
 
                 // ������ ���� ������ ������ ���
                 string scoreGrade = GetScoreGrade(latestScore);
