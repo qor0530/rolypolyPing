@@ -1,33 +1,70 @@
 using UnityEngine;
-using UnityEngine.SceneManagement; // ¾À ÀüÈ¯À» À§ÇÑ ³×ÀÓ½ºÆäÀÌ½º
-using UnityEngine.UI; // UI ¹öÆ°À» »ç¿ëÇÏ±â À§ÇÑ ³×ÀÓ½ºÆäÀÌ½º
-using System.Collections.Generic; // List »ç¿ëÀ» À§ÇØ
+using UnityEngine.SceneManagement; // ï¿½ï¿½ ï¿½ï¿½È¯ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ó½ï¿½ï¿½ï¿½ï¿½Ì½ï¿½
+using UnityEngine.UI; // UI ï¿½ï¿½Æ°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ó½ï¿½ï¿½ï¿½ï¿½Ì½ï¿½
+using System.Collections.Generic; // List ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
 public class SceneChange : MonoBehaviour
 {
-    // Button°ú SceneNameÀ» ÀúÀåÇÒ Å¬·¡½º¸¦ ¸¸µê
+    // Buttonï¿½ï¿½ SceneNameï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     [System.Serializable]
     public class ButtonScenePair
     {
-        public Button button; // UI ¹öÆ°
-        public string sceneName; // ÀüÈ¯ÇÒ ¾À ÀÌ¸§
+        public Button button; // UI ï¿½ï¿½Æ°
+        public string sceneName; // ï¿½ï¿½È¯ï¿½ï¿½ ï¿½ï¿½ ï¿½Ì¸ï¿½
     }
 
-    // ¸®½ºÆ®·Î ¿©·¯ °³ÀÇ ¹öÆ°-¾À ¿¬°áÀ» ÀúÀå
+    // ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ°-ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     public List<ButtonScenePair> buttonScenePairs;
 
     void Start()
     {
-        // °¢ ¹öÆ°¿¡ ´ëÇÑ Å¬¸¯ ÀÌº¥Æ®¸¦ ¼³Á¤
+        // ï¿½ï¿½ ï¿½ï¿½Æ°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ ï¿½Ìºï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         foreach (var pair in buttonScenePairs)
         {
             pair.button.onClick.AddListener(() => ChangeScene(pair.sceneName));
         }
     }
 
-    // ¾ÀÀ» ÀüÈ¯ÇÏ´Â ¸Ş¼­µå
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ï¿½Ï´ï¿½ ï¿½Ş¼ï¿½ï¿½ï¿½
     void ChangeScene(string sceneName)
     {
         SceneManager.LoadScene(sceneName);
     }
 }
+
+
+// using System.Collections;
+// using System.Collections.Generic;
+// using UnityEngine;
+// using UnityEngine.SceneManagement;
+// using UnityEngine.UI;
+
+// public class ResultManager : MonoBehaviour
+// {
+//     public Button confirmResultButton; // í™•ì¸ ë²„íŠ¼ : ëˆ„ë¥´ë©´ íŠ¹ì • ì”¬ìœ¼ë¡œ ì´ë™
+//     public Button retryButton;         // ë‹¤ì‹œ í•˜ê¸° ë²„íŠ¼ : í˜„ì¬ ì”¬ì„ ì¬ì‹œì‘
+//     public Button lobbyButton;         // ë¡œë¹„ ë²„íŠ¼ : ë¡œë¹„ í™”ë©´ìœ¼ë¡œ ì´ë™
+
+//     void Start()
+//     {
+//         PrintResult();
+
+//         // ë²„íŠ¼ í´ë¦­ ì´ë²¤íŠ¸ ì—°ê²°
+//         confirmResultButton.onClick.AddListener(() => ChangeScene("RankingScene")); // ë­í‚¹ í™”ë©´ìœ¼ë¡œ ì´ë™
+//         retryButton.onClick.AddListener(() => ChangeScene(SceneManager.GetActiveScene().name)); // í˜„ì¬ ì”¬ ì¬ì‹œì‘
+//         lobbyButton.onClick.AddListener(() => ChangeScene("LobbyScene")); // ë¡œë¹„ í™”ë©´ìœ¼ë¡œ ì´ë™
+//     }
+
+//     // ê²Œì„ ê²°ê³¼ ì¶œë ¥ í•¨ìˆ˜
+//     void PrintResult()
+//     {
+//         // êµ¬ì¡° : ì‹±ê¸€ ë˜ëŠ” ë©€í‹° ì—¬ë¶€ì— ë”°ë¼ ê²°ê³¼ë¥¼ ì¶œë ¥
+//         Debug.Log("ê²Œì„ ê²°ê³¼ ì¶œë ¥");
+//     }
+
+//     // ì”¬ ë³€ê²½ì„ ì²˜ë¦¬í•˜ëŠ” í•¨ìˆ˜
+//     void ChangeScene(string sceneName)
+//     {
+//         SceneManager.LoadScene(sceneName);
+//     }
+// }
