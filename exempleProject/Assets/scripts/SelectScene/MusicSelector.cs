@@ -6,6 +6,11 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine.Networking;
 using System;
+using System.Text;
+using UnityEngine;
+using System.Net;
+using System.Net.Sockets;
+
 
 /// /////////////////// Short/Long 은 mp3 재생길이 1분 기준으로 분류
 
@@ -34,6 +39,7 @@ public class MusicSelector : MonoBehaviour
     private List<string> shortFilePaths = new List<string>(); // 1분 이하 음악 경로
     private bool isLong = true; // Long 탭일때 화면 시작
 
+
     private void Start()
     {
         // string basePath = "/Users/jeongsieun/Fiction-Royals-Merge/Fiction-Royals/db";
@@ -42,7 +48,7 @@ public class MusicSelector : MonoBehaviour
 
         // 정규화된 경로 출력
         Debug.Log("Base Path (Full): " + Path.GetFullPath(basePath));
-    
+
 
         if (audioSource == null)
         {
@@ -78,9 +84,8 @@ public class MusicSelector : MonoBehaviour
         leftArrowButton.onClick.AddListener(() => ChangeThumbnail(-1));
         rightArrowButton.onClick.AddListener(() => ChangeThumbnail(1));
         thumbnailButton.onClick.AddListener(StartGame);
+
     }
-
-
 
     private System.Collections.IEnumerator ClassifyMusicFiles(System.Action onComplete)
     {
@@ -124,7 +129,7 @@ public class MusicSelector : MonoBehaviour
             }
         }
 
-        onComplete?.Invoke(); // 분류 완료 후 초기화 호출 (onComplete 콜백 호출)
+        onComplete?.Invoke(); //분류 완료 후 초기화 호출 (onComplete 콜백 호출)
     }
 
     private void SwitchCategory(bool toLong)
@@ -219,7 +224,62 @@ public class MusicSelector : MonoBehaviour
         PlayerPrefs.SetString("SelectedMusicPath", isLong ? longFilePaths[currentIndex] : shortFilePaths[currentIndex]);
         PlayerPrefs.Save();
 
+        // 어떤 곡 골랐는지 파이썬에 전송
+        send_to_python(currentIndex);
+
         // GameScene으로 전환
         SceneManager.LoadScene("GameScene");
+    }
+
+    private void send_to_python(int song_id)
+    {
+        string message = "";
+        if (isLong)
+        {
+            if (song_id == 0)
+            {
+                message = "start 1"; // Python으로 보낼 메시지 생성
+            }
+            else if (song_id == 1)
+            {
+                message = "start 4";
+            }
+        }
+
+        else
+        {
+            if (song_id == 0)
+            {
+                message = "start 0";
+            }
+            else if (song_id == 1)
+            {
+                message = "start 2";
+            }
+            else if (song_id == 2)
+            {
+                message = "start 3";
+            }
+        }
+        string ip = "127.0.0.1"; // Python 서버의 IP 주소 (로컬)
+        int port = 25252; // Python 서버의 포트 번호
+        Debug.Log("보내는 곡: " + message + "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+
+        using (UdpClient udpClient = new UdpClient())
+        {
+            try
+            {
+                // 메시지를 UTF-8로 인코딩하여 바이트 배열로 변환
+                byte[] sendBytes = Encoding.UTF8.GetBytes(message);
+
+                // UDP 메시지 전송
+                udpClient.Send(sendBytes, sendBytes.Length, ip, port);
+                Debug.Log($"메시지 전송 성공: {message} -> {ip}:{port}");
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"메시지 전송 실패: {e.Message}");
+            }
+        }
     }
 }

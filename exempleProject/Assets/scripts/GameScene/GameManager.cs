@@ -1,56 +1,106 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI; // UI °ü·Ã ³×ÀÓ½ºÆäÀÌ½º
-using UnityEngine.SceneManagement; // ¾À ÀüÈ¯À» À§ÇÑ ³×ÀÓ½ºÆäÀÌ½º
-using TMPro; // TextMeshPro °ü·Ã ³×ÀÓ½ºÆäÀÌ½º Ãß°¡
+using UnityEngine.UI; // UI ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ó½ï¿½ï¿½ï¿½ï¿½Ì½ï¿½
+using UnityEngine.SceneManagement; // ï¿½ï¿½ ï¿½ï¿½È¯ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ó½ï¿½ï¿½ï¿½ï¿½Ì½ï¿½
+using TMPro; // TextMeshPro ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ó½ï¿½ï¿½ï¿½ï¿½Ì½ï¿½ ï¿½ß°ï¿½
 using UnityEditor;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using TMPro;
+using System.Collections.Generic;
+using System.Collections;
+using System.IO; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ß°ï¿½
+using UnityEngine.Networking; // UnityWebRequestï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï·ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½
 
 
 public class GameManager : MonoBehaviour
 {
+    public Button completeGameButton; // ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½ ï¿½ï¿½Æ°
+    public Image scoreImage; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ Ç¥ï¿½ï¿½
+    private List<float> scores = new List<float>(); // 3ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®
 
-    public Button completeGameButton; // °ÔÀÓ ¿Ï·á ¹öÆ°
-    public Image scoreImage; // Á¡¼ö¿¡ µû¸¥ ÀÌ¹ÌÁö Ç¥½Ã
-    private List<float> scores = new List<float>(); // 3ÃÊ °£°ÝÀ¸·Î ¼öÁýµÈ Á¡¼ö ¸®½ºÆ®
-
-    // °¢ Á¡¼ö ±¸°£ÀÇ °³¼ö¸¦ Ä«¿îÆ®ÇÏ±â À§ÇÑ º¯¼ö
+    // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ä«ï¿½ï¿½Æ®ï¿½Ï±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     private int excellentCount = 0;
     private int greatCount = 0;
     private int goodCount = 0;
     private int badCount = 0;
     private int missCount = 0;
-    
-    private float totalScore = 0f; // ÀüÃ¼ Á¡¼öÀÇ ÇÕ
-    private int totalScoreCount = 0; // ÀüÃ¼ Á¡¼ö °³¼ö
-    private float averageScore = 0f; // 1.5ÃÊ °£°ÝÀÇ Æò±Õ Á¡¼ö
 
-    private string starScore = ""; //Result¿¡ ³ªÅ¸³¾ µî±Þ
+    private float totalScore = 0f; // ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
+    private int totalScoreCount = 0; // ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    private float averageScore = 0f; // 1.5ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+
+    private string starScore = ""; //Resultï¿½ï¿½ ï¿½ï¿½Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½
+    public AudioSource audioSource;
 
     void Start()
     {
-        // PlayerPrefs¿¡ ÀúÀåµÈ Ä«¸Þ¶ó ¹× ½æ³×ÀÏ Á¤º¸¸¦ ·Î±×·Î Ãâ·Â
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
+        string basePath = Path.Combine(Application.dataPath, "../../../../../Fiction-Royals-Merge/Fiction-Royals/db");
+        LoadSelectedMusic();
+
+        // PlayerPrefsï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Î±×·ï¿½ ï¿½ï¿½ï¿½
         PrintAllPlayerPrefs();
-        // °ÔÀÓ ¿Ï·á ¹öÆ° Å¬¸¯ ÀÌº¥Æ® ¿¬°á
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½ ï¿½ï¿½Æ° Å¬ï¿½ï¿½ ï¿½Ìºï¿½Æ® ï¿½ï¿½ï¿½ï¿½
         completeGameButton.onClick.AddListener(CompleteGame);
 
-        // Á¡¼ö¸¦ ½Ç½Ã°£ ¾÷µ¥ÀÌÆ®
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ç½Ã°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®
         HideScoreImage();
         StartCoroutine(UpdateScore());
         starScore = GetStarGrade(excellentCount, greatCount, goodCount, badCount, missCount);
     }
 
+    void LoadSelectedMusic()
+    {
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
+
+        if (PlayerPrefs.HasKey("SelectedMusicPath"))
+        {
+            string selectedMusicPath = PlayerPrefs.GetString("SelectedMusicPath");
+            StartCoroutine(LoadAudio(selectedMusicPath));
+        }
+        else
+        {
+            Debug.LogWarning("ï¿½ï¿½ï¿½Ãµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Î¸ï¿½ Ã£ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.");
+        }
+    }
+
+    private IEnumerator LoadAudio(string filePath)
+    {
+        using (UnityWebRequest uwr = UnityWebRequestMultimedia.GetAudioClip("file://" + filePath, AudioType.MPEG))
+        {
+            yield return uwr.SendWebRequest();
+
+            if (uwr.result == UnityWebRequest.Result.Success)
+            {
+                audioSource.clip = DownloadHandlerAudioClip.GetContent(uwr);
+                audioSource.Play();
+                Debug.Log("ï¿½ï¿½ï¿½Ãµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½: " + filePath);
+            }
+            else
+            {
+                Debug.LogError("ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½ ï¿½ï¿½ï¿½ï¿½: " + filePath);
+            }
+        }
+    }
+
+
     void ShowScoreImage()
     {
         Color color = scoreImage.color;
-        color.a = 1; // ¾ËÆÄ°ªÀ» 1·Î ¼³Á¤ (¿ÏÀü ºÒÅõ¸í)
+        color.a = 1; // ï¿½ï¿½ï¿½Ä°ï¿½ï¿½ï¿½ 1ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
         scoreImage.color = color;
     }
 
     void HideScoreImage()
     {
         Color color = scoreImage.color;
-        color.a = 0; // ¾ËÆÄ°ªÀ» 0À¸·Î ¼³Á¤ (¿ÏÀü Åõ¸í)
+        color.a = 0; // ï¿½ï¿½ï¿½Ä°ï¿½ï¿½ï¿½ 0ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
         scoreImage.color = color;
     }
 
@@ -58,61 +108,61 @@ public class GameManager : MonoBehaviour
     {
         while (true)
         {
-            // scores.Clear(); // »õ·Î¿î 3ÃÊ °£°ÝÀ» À§ÇØ ¸®½ºÆ® ÃÊ±âÈ­
+            // scores.Clear(); // ï¿½ï¿½ï¿½Î¿ï¿½ 3ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ® ï¿½Ê±ï¿½È­
 
-            // UDPReceiver¿¡¼­ ÃÖ½Å Á¡¼ö °¡Á®¿À±â
+            // UDPReceiverï¿½ï¿½ï¿½ï¿½ ï¿½Ö½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             if (UDPReceiver.Instance != null && UDPReceiver.Instance.LatestCoord3D != null)
             {
                 float latestScore = UDPReceiver.Instance.LatestScore;
-                // Á¡¼ö¸¦ ¸®½ºÆ®¿¡ Ãß°¡ÇÏÁö ¾Ê°í ¹Ù·Î ´©Àû
+                // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ß°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê°ï¿½ ï¿½Ù·ï¿½ ï¿½ï¿½ï¿½ï¿½
                 totalScore += latestScore;
                 totalScoreCount++;
 
                 // scores.Add(latestScore);
                 // totalScore += latestScore;
 
-                // Á¡¼ö¿¡ µû¶ó ±¸ºÐÀ» ³ª´©°í Ãâ·Â
+                // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
                 string scoreGrade = GetScoreGrade(latestScore);
                 UpdateScoreImage(scoreGrade);
 
                 Debug.Log($"Latest Score: {latestScore:F2}, Grade: {scoreGrade}");
             }
-            
-            // 3ÃÊ µ¿¾ÈÀÇ Æò±Õ Á¡¼ö °è»ê
+
+            // 3ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
             if (totalScoreCount > 0)
             {
                 averageScore = totalScore / totalScoreCount;
             }
 
-            // Á¡¼ö ±¸°£º° °³¼ö Ä«¿îÆ®
+            // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ä«ï¿½ï¿½Æ®
             CountScoreGrades();
 
-            // 3ÃÊ °£°ÝÀ¸·Î Æò±Õ Á¡¼ö¿Í °¢ ±¸°£º° °³¼ö¸¦ ±â·Ï
+            // 3ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
             Debug.Log($"Average Score (3s): {averageScore:F2}, Excellent: {excellentCount}, Great: {greatCount}, Good: {goodCount}, Bad: {badCount}, Miss: {missCount}");
 
-            yield return new WaitForSeconds(1.5f); // 1.5ÃÊ °£°ÝÀ¸·Î ¾÷µ¥ÀÌÆ®
+            yield return new WaitForSeconds(1.5f); // 1.5ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®
         }
     }
 
-// Á¡¼ö¿¡ µû¶ó ÀÌ¹ÌÁö¸¦ º¯°æÇÏ´Â ÇÔ¼ö
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½Ô¼ï¿½
     void UpdateScoreImage(string scoreGrade)
     {
-        
-        string imagePath = $"Images/{scoreGrade.ToLower()}"; // ÀÌ¹ÌÁö °æ·Î ¼³Á¤ (Resources Æú´õ ³» °æ·Î)
+
+        string imagePath = $"Images/{scoreGrade.ToLower()}"; // ï¿½Ì¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (Resources ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½)
         Sprite newSprite = Resources.Load<Sprite>(imagePath);
 
         if (newSprite != null)
         {
-            scoreImage.sprite = newSprite; // ÀÌ¹ÌÁö º¯°æ
-            ShowScoreImage(); // ÀÌ¹ÌÁö º¸ÀÌ±â
+            scoreImage.sprite = newSprite; // ï¿½Ì¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+            ShowScoreImage(); // ï¿½Ì¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì±ï¿½
         }
         else
         {
-            Debug.LogWarning($"ÀÌ¹ÌÁö¸¦ ·ÎµåÇÒ ¼ö ¾ø½À´Ï´Ù: {imagePath}");
-            HideScoreImage(); // ÀÌ¹ÌÁö ¼û±â±â
+            Debug.LogWarning($"ï¿½Ì¹ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½: {imagePath}");
+            HideScoreImage(); // ï¿½Ì¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½
         }
     }
-    // Á¡¼ö¸¦ ±¸°£º°·Î ±¸ºÐÇÏ´Â ÇÔ¼ö
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½Ô¼ï¿½
     string GetScoreGrade(float score)
     {
         if (score >= 91)
@@ -171,45 +221,45 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // PlayerPrefs¿¡ ÀúÀåµÈ ¸ðµç ³»¿ëÀ» Ãâ·ÂÇÏ´Â ÇÔ¼ö (Áßº¹ Á¦°Å)
+    // PlayerPrefsï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½Ô¼ï¿½ (ï¿½ßºï¿½ ï¿½ï¿½ï¿½ï¿½)
     void PrintAllPlayerPrefs()
     {
-        // ÀúÀåµÈ GameMode ºÒ·¯¿À±â
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ GameMode ï¿½Ò·ï¿½ï¿½ï¿½ï¿½ï¿½
         if (PlayerPrefs.HasKey("GameMode"))
         {
             int gameMode = PlayerPrefs.GetInt("GameMode");
 
             if (gameMode == 1)
             {
-                Debug.Log("½Ì±ÛÇÃ·¹ÀÌ ¸ðµå·Î ½ÃÀÛ");
+                Debug.Log("ï¿½Ì±ï¿½ï¿½Ã·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½");
             }
             else if (gameMode == 2)
             {
-                Debug.Log("¸ÖÆ¼ÇÃ·¹ÀÌ ¸ðµå·Î ½ÃÀÛ");
+                Debug.Log("ï¿½ï¿½Æ¼ï¿½Ã·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½");
             }
             else
             {
-                Debug.Log("Àß¸øµÈ gameModeÀÔ´Ï´Ù.");
+                Debug.Log("ï¿½ß¸ï¿½ï¿½ï¿½ gameModeï¿½Ô´Ï´ï¿½.");
             }
         }
         else
         {
-            Debug.Log("GameMode¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù.");
+            Debug.Log("GameModeï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.");
         }
 
 
-        // ¼±ÅÃµÈ Ä«¸Þ¶ó Á¤º¸ Ãâ·Â
+        // ï¿½ï¿½ï¿½Ãµï¿½ Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
         if (PlayerPrefs.HasKey("SelectedCameraIndex"))
         {
-                int selectedCameraIndex = PlayerPrefs.GetInt("SelectedCameraIndex");
-                Debug.Log("SelectedCameraIndex: " + selectedCameraIndex);
+            int selectedCameraIndex = PlayerPrefs.GetInt("SelectedCameraIndex");
+            Debug.Log("SelectedCameraIndex: " + selectedCameraIndex);
         }
         else
         {
-            Debug.Log("Ä«¸Þ¶ó Á¤º¸¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù.");
+            Debug.Log("Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.");
         }
 
-        // ¼±ÅÃµÈ ½æ³×ÀÏ Á¤º¸ Ãâ·Â
+        // ï¿½ï¿½ï¿½Ãµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
         if (PlayerPrefs.HasKey("SelectedMusicIndex"))
         {
             int selectedThumbnailIndex = PlayerPrefs.GetInt("SelectedMusicIndex");
@@ -217,15 +267,15 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("À½¾Ç Á¤º¸¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù.");
+            Debug.Log("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.");
         }
 
-        Debug.Log("PlayerPrefs ÀúÀåµÈ ¸ðµç Á¤º¸¸¦ Ãâ·ÂÇß½À´Ï´Ù.");
-    }  
-    // °ÔÀÓ ¿Ï·á ½Ã ResultSceneÀ¸·Î ÀÌµ¿ÇÏ´Â ÇÔ¼ö
+        Debug.Log("PlayerPrefs ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½.");
+    }
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½ ï¿½ï¿½ ResultSceneï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ï¿½Ï´ï¿½ ï¿½Ô¼ï¿½
     public void CompleteGame()
     {
-        // Á¡¼ö¿Í °³¼ö ÀúÀå
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         PlayerPrefs.SetString("StarScore", starScore);
         PlayerPrefs.SetInt("ExcellentCount", excellentCount);
         PlayerPrefs.SetInt("GreatCount", greatCount);
@@ -233,7 +283,7 @@ public class GameManager : MonoBehaviour
         PlayerPrefs.SetInt("BadCount", badCount);
         PlayerPrefs.SetInt("MissCount", missCount);
 
-        // ResultSceneÀ¸·Î ÀüÈ¯
+        // ResultSceneï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
         SceneManager.LoadScene("ResultScene");
     }
 }
