@@ -22,6 +22,8 @@ public class GameManager : MonoBehaviour
     
     private float averageScore = 0f; // 3초 간격의 평균 점수
 
+    privatae float starScore = 0; //Result에 나타낼 별 개수
+
     void Start()
     {
         // PlayerPrefs에 저장된 카메라 및 썸네일 정보를 로그로 출력
@@ -49,7 +51,7 @@ public class GameManager : MonoBehaviour
 
                 // 점수에 따라 구분을 나누고 출력
                 string scoreGrade = GetScoreGrade(latestScore);
-                scoreText.text = $"Score: {scoreGrade}";
+                scoreText.text = $"{scoreGrade}";
             }
             
             // 3초 동안의 평균 점수 계산
