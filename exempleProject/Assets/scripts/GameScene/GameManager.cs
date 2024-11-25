@@ -22,7 +22,7 @@ public class GameManager : MonoBehaviour
     
     private float averageScore = 0f; // 3초 간격의 평균 점수
 
-    privatae float starScore = 0; //Result에 나타낼 별 개수
+    private float starScore = 0; //Result에 나타낼 별 개수
 
     void Start()
     {
