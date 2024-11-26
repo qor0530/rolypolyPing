@@ -41,7 +41,7 @@ public class UDPReceiver : MonoBehaviour
         receiveThread = new Thread(new ThreadStart(ReceiveData));
         receiveThread.IsBackground = true;
         receiveThread.Start();
-        Debug.Log($"UDP 서버가 {port} 포트에서 대기 중입니다.");
+        // Debug.Log($"UDP 서버가 {port} 포트에서 대기 중입니다.");
     }
 
     private void ReceiveData()
@@ -54,14 +54,14 @@ public class UDPReceiver : MonoBehaviour
             {
                 byte[] data = udpClient.Receive(ref remoteEndPoint);
                 string message = Encoding.UTF8.GetString(data);
-                Debug.Log($"수신 데이터: {message}");
+                // Debug.Log($"수신 데이터: {message}");
 
                 ParseJsonData(message);
             }
         }
         catch (System.Exception e)
         {
-            Debug.LogError($"UDP 수신 중 오류 발생: {e.Message}");
+            // Debug.LogError($"UDP 수신 중 오류 발생: {e.Message}");
         }
     }
 
@@ -85,13 +85,13 @@ public class UDPReceiver : MonoBehaviour
                 }
                 else
                 {
-                    Debug.LogWarning("coord_3d 데이터가 부족하거나 null입니다.");
+                    // Debug.LogWarning("coord_3d 데이터가 부족하거나 null입니다.");
                 }
             }
         }
         catch (System.Exception e)
         {
-            Debug.LogError($"JSON 파싱 중 오류 발생: {e.Message}");
+            // Debug.LogError($"JSON 파싱 중 오류 발생: {e.Message}");
         }
     }
 

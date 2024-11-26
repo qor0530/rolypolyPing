@@ -1423,6 +1423,7 @@ MonoBehaviour:
   GoodCount: {fileID: 1539427260}
   BadCount: {fileID: 1627121587}
   MissCount: {fileID: 1011679431}
+  RankImage: {fileID: 495789110}
 --- !u!4 &1294651544
 Transform:
   m_ObjectHideFlags: 0

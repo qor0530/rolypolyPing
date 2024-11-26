@@ -1,35 +1,35 @@
 using UnityEngine;
-using UnityEngine.UI; // UI ���� ���ӽ����̽�
-using UnityEngine.SceneManagement; // �� ��ȯ�� ���� ���ӽ����̽�
-using TMPro; // TextMeshPro ���� ���ӽ����̽� �߰�
+using UnityEngine.UI; // UI ???? ??????????
+using UnityEngine.SceneManagement; // ?? ????? ???? ??????????
+using TMPro; // TextMeshPro ???? ?????????? ???
 using UnityEditor;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
 using System.Collections;
-using System.IO; // ���� ��� ���� ��� �߰�
-using UnityEngine.Networking; // UnityWebRequest�� ����Ϸ��� �ʿ�
+using System.IO; // ???? ??? ???? ??? ???
+using UnityEngine.Networking; // UnityWebRequest?? ???????? ???
 
 
 public class GameManager : MonoBehaviour
 {
-    public Button completeGameButton; // ���� �Ϸ� ��ư
-    public Image scoreImage; // ������ ���� �̹��� ǥ��
-    private List<float> scores = new List<float>(); // 3�� �������� ������ ���� ����Ʈ
+    public Button completeGameButton; // ???? ??? ???
+    public Image scoreImage; // ?????? ???? ????? ???
+    private List<float> scores = new List<float>(); // 3?? ???????? ?????? ???? ?????
 
-    // �� ���� ������ ������ ī��Ʈ�ϱ� ���� ����
-    private int excellentCount = 0;
-    private int greatCount = 0;
-    private int goodCount = 0;
-    private int badCount = 0;
-    private int missCount = 0;
+    // ?? ???? ?????? ?????? ??????? ???? ????
+    public int excellentCount = 0;
+    public int greatCount = 0;
+    public int goodCount = 0;
+    public int badCount = 0;
+    public int missCount = 0;
 
-    private float totalScore = 0f; // ��ü ������ ��
-    private int totalScoreCount = 0; // ��ü ���� ����
-    private float averageScore = 0f; // 1.5�� ������ ��� ����
+    public float totalScore = 0f; // ??? ?????? ??
+    public int totalScoreCount = 0; // ??? ???? ????
+    public float averageScore = 0f; // 1.5?? ?????? ??? ????
 
-    private string starScore = ""; //Result�� ��Ÿ�� ���
+    public string starScore = ""; //Result?? ????? ???
     public AudioSource audioSource;
 
     void Start()
@@ -41,12 +41,15 @@ public class GameManager : MonoBehaviour
         string basePath = Path.Combine(Application.dataPath, "../../../../../Fiction-Royals-Merge/Fiction-Royals/db");
         LoadSelectedMusic();
 
-        // PlayerPrefs�� ����� ī�޶� �� ����� ������ �α׷� ���
+        PlayerPrefs.Save();
+        // PlayerPrefs?? ????? ???? ?? ????? ?????? ?��?? ???
         PrintAllPlayerPrefs();
-        // ���� �Ϸ� ��ư Ŭ�� �̺�Ʈ ����
+
+
+        // ???? ??? ??? ??? ???? ????
         completeGameButton.onClick.AddListener(CompleteGame);
 
-        // ������ �ǽð� ������Ʈ
+        // ?????? ??��? ???????
         HideScoreImage();
         StartCoroutine(UpdateScore());
         starScore = GetStarGrade(excellentCount, greatCount, goodCount, badCount, missCount);
@@ -66,7 +69,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("���õ� ���� ��θ� ã�� �� �����ϴ�.");
+            Debug.LogWarning("????? ???? ??��? ??? ?? ???????.");
         }
     }
 
@@ -80,11 +83,11 @@ public class GameManager : MonoBehaviour
             {
                 audioSource.clip = DownloadHandlerAudioClip.GetContent(uwr);
                 audioSource.Play();
-                Debug.Log("���õ� ���� ��� ��: " + filePath);
+                Debug.Log("????? ???? ??? ??: " + filePath);
             }
             else
             {
-                Debug.LogError("����� ���� �ε� ����: " + filePath);
+                Debug.LogError("????? ???? ?��? ????: " + filePath);
             }
         }
     }
@@ -93,14 +96,14 @@ public class GameManager : MonoBehaviour
     void ShowScoreImage()
     {
         Color color = scoreImage.color;
-        color.a = 1; // ���İ��� 1�� ���� (���� ������)
+        color.a = 1; // ??????? 1?? ???? (???? ??????)
         scoreImage.color = color;
     }
 
     void HideScoreImage()
     {
         Color color = scoreImage.color;
-        color.a = 0; // ���İ��� 0���� ���� (���� ����)
+        color.a = 0; // ??????? 0???? ???? (???? ????)
         scoreImage.color = color;
     }
 
@@ -108,58 +111,59 @@ public class GameManager : MonoBehaviour
     {
         while (true)
         {
-            // scores.Clear(); // ���ο� 3�� ������ ���� ����Ʈ �ʱ�ȭ
+            // scores.Clear(); // ???��? 3?? ?????? ???? ????? ????
 
-            // UDPReceiver���� �ֽ� ���� ��������
+            // UDPReceiver???? ??? ???? ????????
             if (UDPReceiver.Instance != null && UDPReceiver.Instance.LatestCoord3Ds.Count != 0)
             {
                 float latestScore = UDPReceiver.Instance.LatestScores[1];
-                scores.Add(latestScore);
+                // ?????? ??????? ??????? ??? ??? ????
                 totalScore += latestScore;
                 totalScoreCount++;
 
-                // ������ ���� ������ ������ ���
+                scores.Add(latestScore);
+                // totalScore += latestScore;
+
+                // ?????? ???? ?????? ?????? ???
                 string scoreGrade = GetScoreGrade(latestScore);
                 UpdateScoreImage(scoreGrade);
-
-                Debug.Log($"Latest Score: {latestScore:F2}, Grade: {scoreGrade}");
             }
 
-            // 3�� ������ ��� ���� ���
+            // 3?? ?????? ??? ???? ???
             if (totalScoreCount > 0)
             {
                 averageScore = totalScore / totalScoreCount;
             }
 
-            // ���� ������ ���� ī��Ʈ
+            // ???? ?????? ???? ????
             CountScoreGrades();
 
-            // 3�� �������� ��� ������ �� ������ ������ ���
+            // 3?? ???????? ??? ?????? ?? ?????? ?????? ???
             Debug.Log($"Average Score (3s): {averageScore:F2}, Excellent: {excellentCount}, Great: {greatCount}, Good: {goodCount}, Bad: {badCount}, Miss: {missCount}");
 
-            yield return new WaitForSeconds(1.5f); // 1.5�� �������� ������Ʈ
+            yield return new WaitForSeconds(1.5f); // 1.5?? ???????? ???????
         }
     }
 
-    // ������ ���� �̹����� �����ϴ� �Լ�
+    // ?????? ???? ??????? ??????? ???
     void UpdateScoreImage(string scoreGrade)
     {
 
-        string imagePath = $"Images/{scoreGrade.ToLower()}"; // �̹��� ��� ���� (Resources ���� �� ���)
+        string imagePath = $"Images/{scoreGrade.ToLower()}"; // ????? ??? ???? (Resources ???? ?? ???)
         Sprite newSprite = Resources.Load<Sprite>(imagePath);
 
         if (newSprite != null)
         {
-            scoreImage.sprite = newSprite; // �̹��� ����
-            ShowScoreImage(); // �̹��� ���̱�
+            scoreImage.sprite = newSprite; // ????? ????
+            ShowScoreImage(); // ????? ?????
         }
         else
         {
-            Debug.LogWarning($"�̹����� �ε��� �� �����ϴ�: {imagePath}");
-            HideScoreImage(); // �̹��� �����
+            Debug.LogWarning($"??????? ?��??? ?? ???????: {imagePath}");
+            HideScoreImage(); // ????? ?????
         }
     }
-    // ������ �������� �����ϴ� �Լ�
+    // ?????? ???????? ??????? ???
     string GetScoreGrade(float score)
     {
         if (score >= 91)
@@ -191,18 +195,20 @@ public class GameManager : MonoBehaviour
 
     string GetStarGrade(int excellentCount, int greatCount, int goodCount, int badCount, int missCount)
     {
-        if (missCount >= 3)
-            return "F";
+        // ?? ?? ???? ???? ??
+        if (missCount >= 2)
+            return "F"; // Miss? 2? ???? "F"
         if (missCount > 0)
-            return "C";
+            return "C"; // Miss? 1?? "C"
         if (badCount > 0)
-            return "B";
+            return "B"; // Bad? 1? ???? "B"
         if (goodCount > 0)
-            return "A";
+            return "A"; // Good? 1? ???? "A"
         if (greatCount > 0)
-            return "S";
+            return "S"; // Great? 1? ???? "S"
         return "SS";
     }
+
 
     void CountScoreGrades()
     {
@@ -218,34 +224,34 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // PlayerPrefs�� ����� ��� ������ ����ϴ� �Լ� (�ߺ� ����)
+    // PlayerPrefs?? ????? ??? ?????? ?????? ??? (??? ????)
     void PrintAllPlayerPrefs()
     {
-        // ����� GameMode �ҷ�����
+        // ????? GameMode ???????
         if (PlayerPrefs.HasKey("GameMode"))
         {
             int gameMode = PlayerPrefs.GetInt("GameMode");
 
             if (gameMode == 1)
             {
-                Debug.Log("�̱��÷��� ���� ����");
+                Debug.Log("????��??? ???? ????");
             }
             else if (gameMode == 2)
             {
-                Debug.Log("��Ƽ�÷��� ���� ����");
+                Debug.Log("????��??? ???? ????");
             }
             else
             {
-                Debug.Log("�߸��� gameMode�Դϴ�.");
+                Debug.Log("????? gameMode????.");
             }
         }
         else
         {
-            Debug.Log("GameMode�� ã�� �� �����ϴ�.");
+            Debug.Log("GameMode?? ??? ?? ???????.");
         }
 
 
-        // ���õ� ī�޶� ���� ���
+        // ????? ???? ???? ???
         if (PlayerPrefs.HasKey("SelectedCameraIndex"))
         {
             int selectedCameraIndex = PlayerPrefs.GetInt("SelectedCameraIndex");
@@ -253,10 +259,10 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("ī�޶� ������ ã�� �� �����ϴ�.");
+            Debug.Log("???? ?????? ??? ?? ???????.");
         }
 
-        // ���õ� ����� ���� ���
+        // ????? ????? ???? ???
         if (PlayerPrefs.HasKey("SelectedMusicIndex"))
         {
             int selectedThumbnailIndex = PlayerPrefs.GetInt("SelectedMusicIndex");
@@ -264,15 +270,15 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("���� ������ ã�� �� �����ϴ�.");
+            Debug.Log("???? ?????? ??? ?? ???????.");
         }
 
-        Debug.Log("PlayerPrefs ����� ��� ������ ����߽��ϴ�.");
+        Debug.Log("PlayerPrefs ????? ??? ?????? ?????????.");
     }
-    // ���� �Ϸ� �� ResultScene���� �̵��ϴ� �Լ�
+    // ???? ??? ?? ResultScene???? ?????? ???
     public void CompleteGame()
     {
-        // ������ ���� ����
+        // ?????? ???? ????
         PlayerPrefs.SetString("StarScore", starScore);
         PlayerPrefs.SetInt("ExcellentCount", excellentCount);
         PlayerPrefs.SetInt("GreatCount", greatCount);
@@ -280,7 +286,10 @@ public class GameManager : MonoBehaviour
         PlayerPrefs.SetInt("BadCount", badCount);
         PlayerPrefs.SetInt("MissCount", missCount);
 
-        // ResultScene���� ��ȯ
+        // ResultScene???? ???
         SceneManager.LoadScene("ResultScene");
+
+        Debug.Log($"StarScore: {starScore}, Excellent: {excellentCount}, Great: {greatCount}, Good: {goodCount}, Bad: {badCount}, Miss: {missCount}");
+
     }
 }

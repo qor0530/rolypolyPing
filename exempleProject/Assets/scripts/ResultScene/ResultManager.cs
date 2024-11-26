@@ -45,7 +45,7 @@ public class ResultManager : MonoBehaviour
         }
 
         // PlayerPrefs로부터 데이터 로드
-        float starScore = PlayerPrefs.GetString("StarScore", "");
+        string starScore = PlayerPrefs.GetString("StarScore", "");
         int excellentCount = PlayerPrefs.GetInt("ExcellentCount", 0);
         int greatCount = PlayerPrefs.GetInt("GreatCount", 0);
         int goodCount = PlayerPrefs.GetInt("GoodCount", 0);
@@ -59,13 +59,24 @@ public class ResultManager : MonoBehaviour
 
     void UpdateUI(string starScore, int excellentCount, int greatCount, int goodCount, int badCount, int missCount)
     {
+
+        if (StarScore == null) Debug.LogError("StarScore TextMeshProUGUI is not assigned!");
+        if (ExcellentCount == null) Debug.LogError("ExcellentCount TextMeshProUGUI is not assigned!");
+        if (GreatCount == null) Debug.LogError("GreatCount TextMeshProUGUI is not assigned!");
+        if (GoodCount == null) Debug.LogError("GoodCount TextMeshProUGUI is not assigned!");
+        if (BadCount == null) Debug.LogError("BadCount TextMeshProUGUI is not assigned!");
+        if (MissCount == null) Debug.LogError("MissCount TextMeshProUGUI is not assigned!");
+
         // TextMeshPro를 사용한 UI 텍스트 갱신
-        if (StarScore != null) StarScore.text = $"Score: {starScore}";
-        if (ExcellentCount != null) ExcellentCount.text = $"Excellent: {excellentCount}";
-        if (GreatCount != null) GreatCount.text = $"Great: {greatCount}";
-        if (GoodCount != null) GoodCount.text = $"Good: {goodCount}";
-        if (BadCount != null) BadCount.text = $"Bad: {badCount}";
-        if (MissCount != null) MissCount.text = $"Miss: {missCount}";
+        if (StarScore != null) StarScore.text = $"{starScore}";
+        if (ExcellentCount != null) ExcellentCount.text = $"{excellentCount}";
+        if (GreatCount != null) GreatCount.text = $"{greatCount}";
+        if (GoodCount != null) GoodCount.text = $"{goodCount}";
+        if (BadCount != null) BadCount.text = $"{badCount}";
+        if (MissCount != null) MissCount.text = $"{missCount}";
+
+        Debug.Log($"Loaded Scores - StarScore: {starScore}, Excellent: {excellentCount}, Great: {greatCount}, Good: {goodCount}, Bad: {badCount}, Miss: {missCount}");
+
         
         UpdateRankImage(starScore); // 랭크 이미지 업데이트
 
@@ -74,7 +85,7 @@ public class ResultManager : MonoBehaviour
     void UpdateRankImage(string starScore)
     {
         
-        string imagePath = $"Images/{starScore.ToLower()}"; // 이미지 경로 설정 (Resources 폴더 내 경로)
+        string imagePath = $"Images/{starScore}"; // 이미지 경로 설정 (Resources 폴더 내 경로)
         Sprite newSprite = Resources.Load<Sprite>(imagePath);
 
         if (newSprite != null)

@@ -44,7 +44,7 @@ public class MusicSelector : MonoBehaviour
     {
         // string basePath = "/Users/jeongsieun/Fiction-Royals-Merge/Fiction-Royals/db";
 
-        string basePath = Path.Combine(Application.dataPath, "../../../../../Fiction-Royals-Merge/Fiction-Royals/db");
+        string basePath = Path.Combine(Application.dataPath, "../../../Fiction-Royals/db");
 
         // 정규화된 경로 출력
         Debug.Log("Base Path (Full): " + Path.GetFullPath(basePath));
