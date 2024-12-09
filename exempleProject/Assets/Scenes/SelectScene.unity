@@ -2058,9 +2058,9 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 9d6486d23c4eb4ab2b498b15592259fe, type: 3}
   - {fileID: 21300000, guid: 49ecadae04438468782fc7905096e3b2, type: 3}
   - {fileID: 21300000, guid: 9bcd151ae1abe4c54be7a3c9024b2df8, type: 3}
+  - {fileID: 21300000, guid: 46b78944534ba437fb8d454ecafd4590, type: 3}
   - {fileID: 21300000, guid: c80bd3e30e3074669aa5ee4bc7ba4bfe, type: 3}
   - {fileID: 21300000, guid: 8ffc462b488364f3c9c2e454f1bda803, type: 3}
-  - {fileID: 21300000, guid: 46b78944534ba437fb8d454ecafd4590, type: 3}
   - {fileID: 21300000, guid: c260708acd5594030a1f26c5baa735bc, type: 3}
   thumbnailTitles:
   - IDOL - YOASOBI
@@ -2068,9 +2068,9 @@ MonoBehaviour:
   - "\uC0C8\uC0A5 - ZICO"
   - SUPERNOVA - AESPA
   - FIGTING - BSS
-  - Mr.Chu - APINK
-  - "\uB108\uC640\uC758 \uBAA8\uB4E0 \uC9C0\uAE08 - \uC7AC\uC4F0\uBE44"
   - "\uBD80\uAE30\uBD80\uAE30\uBC40\uBC40 - \uD3EC\uCF13\uBAAC\uB304\uC2A4"
+  - "\uB9C8\uB77C\uD0D5\uD6C4\uB8E8 - \uC11C\uC774\uBE0C"
+  - "\uB108\uC640\uC758 \uBAA8\uB4E0 \uC9C0\uAE08 - \uC7AC\uC4F0\uBE44"
   - Mr.Chu - APINK
   displayImage: {fileID: 132432975}
   displayTitle: {fileID: 1757073892}
