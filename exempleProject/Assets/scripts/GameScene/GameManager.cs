@@ -15,22 +15,15 @@ using UnityEngine.Networking; // UnityWebRequest?? ???????? ???
 public class GameManager : MonoBehaviour
 {
     public Button completeGameButton; // ???? ??? ???
-    public Image scoreImage; // ?????? ???? ????? ???
+    public List<Image> scoreImages; // 실시간 평가를 표시할 이미지 리스트
+    private List<PlayerData> playerDataList = new List<PlayerData>(); // 각 사용자의 평가 데이터를 저장
+
     private List<float> scores = new List<float>(); // 3?? ???????? ?????? ???? ?????
 
-    // ?? ???? ?????? ?????? ??????? ???? ????
-    public int excellentCount = 0;
-    public int greatCount = 0;
-    public int goodCount = 0;
-    public int badCount = 0;
-    public int missCount = 0;
-
-    public float totalScore = 0f; // ??? ?????? ??
-    public int totalScoreCount = 0; // ??? ???? ????
-    public float averageScore = 0f; // 1.5?? ?????? ??? ????
-
-    public string starScore = ""; //Result?? ????? ???
     public AudioSource audioSource;
+    
+    private float lastScoreUpdateTime = 0f; // 마지막 점수 갱신 시간
+    private float scoreUpdateInterval = 1.5f; // 점수 갱신 간격
 
     void Start()
     {
@@ -42,17 +35,37 @@ public class GameManager : MonoBehaviour
         LoadSelectedMusic();
 
         PlayerPrefs.Save();
-        // PlayerPrefs?? ????? ???? ?? ????? ?????? ?α?? ???
         PrintAllPlayerPrefs();
 
+        InitializePlayerData(3);
 
-        // ???? ??? ??? ??? ???? ????
-        completeGameButton.onClick.AddListener(CompleteGame);
-
-        // ?????? ??ð? ???????
         HideScoreImage();
-        StartCoroutine(UpdateScore());
-        starScore = GetStarGrade(excellentCount, greatCount, goodCount, badCount, missCount);
+        
+        completeGameButton.onClick.AddListener(CompleteGame);
+    }
+
+    void Update()
+    {
+        float currentTime = Time.time;
+        if (currentTime - lastScoreUpdateTime >= scoreUpdateInterval)
+        {
+            if (UDPReceiver.Instance != null && UDPReceiver.Instance.LatestScores.Count > 0)
+            {
+                for (int i = 0; i < playerDataList.Count; i++)
+                {
+                    if (i < UDPReceiver.Instance.LatestScores.Count)
+                    {   
+                        float latestScore = UDPReceiver.Instance.LatestScores[i+1];
+                        PlayerData playerData = playerDataList[i];
+
+                        string scoreGrade = GetScoreGrade(latestScore, playerData);
+                        UpdateScoreImage(i, scoreGrade);
+                    }
+                }
+            }
+            // 마지막 점수 갱신 시간을 현재 시간으로 업데이트
+            lastScoreUpdateTime = currentTime;
+        }
     }
 
     void LoadSelectedMusic()
@@ -69,7 +82,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("????? ???? ??θ? ??? ?? ???????.");
+            Debug.LogWarning("????? ???? ????? ??? ?? ???????.");
         }
     }
 
@@ -87,140 +100,148 @@ public class GameManager : MonoBehaviour
             }
             else
             {
-                Debug.LogError("????? ???? ?ε? ????: " + filePath);
+                Debug.LogError("????? ???? ???? ????: " + filePath);
             }
         }
     }
 
+    // 플레이어 데이터를 초기화
+    void InitializePlayerData(int playerCount)
+    {
+        for (int i = 0; i < playerCount; i++)
+        {
+            playerDataList.Add(new PlayerData());
+        }
+    }
 
     void ShowScoreImage()
     {
-        Color color = scoreImage.color;
-        color.a = 1; // ??????? 1?? ???? (???? ??????)
-        scoreImage.color = color;
+        foreach (var scoreImage in scoreImages)
+        {
+            if (scoreImage != null)
+            {
+                Color color = scoreImage.color;
+                color.a = 1;
+                scoreImage.color = color;
+            }
+        }
     }
 
     void HideScoreImage()
     {
-        Color color = scoreImage.color;
-        color.a = 0; // ??????? 0???? ???? (???? ????)
-        scoreImage.color = color;
-    }
-
-    IEnumerator UpdateScore()
-    {
-        while (true)
+        foreach (var scoreImage in scoreImages)
         {
-            // scores.Clear(); // ???ο? 3?? ?????? ???? ????? ????
-
-            // UDPReceiver???? ??? ???? ????????
-            if (UDPReceiver.Instance != null && UDPReceiver.Instance.LatestCoord3Ds.Count != 0)
+            if (scoreImage != null)
             {
-                float latestScore = UDPReceiver.Instance.LatestScores[1];
-                // ?????? ??????? ??????? ??? ??? ????
-                totalScore += latestScore;
-                totalScoreCount++;
-
-                scores.Add(latestScore);
-                // totalScore += latestScore;
-
-                // ?????? ???? ?????? ?????? ???
-                string scoreGrade = GetScoreGrade(latestScore);
-                UpdateScoreImage(scoreGrade);
+                Color color = scoreImage.color;
+                color.a = 0; // 알파값을 0으로 설정하여 숨김
+                scoreImage.color = color;
             }
-
-            // 3?? ?????? ??? ???? ???
-            if (totalScoreCount > 0)
-            {
-                averageScore = totalScore / totalScoreCount;
-            }
-
-            // ???? ?????? ???? ????
-            CountScoreGrades();
-
-            // 3?? ???????? ??? ?????? ?? ?????? ?????? ???
-            Debug.Log($"Average Score (3s): {averageScore:F2}, Excellent: {excellentCount}, Great: {greatCount}, Good: {goodCount}, Bad: {badCount}, Miss: {missCount}");
-
-            yield return new WaitForSeconds(1.5f); // 1.5?? ???????? ???????
         }
     }
 
-    // ?????? ???? ??????? ??????? ???
-    void UpdateScoreImage(string scoreGrade)
+    void UpdateScoreImage(int playerIndex, string scoreGrade)
     {
-
-        string imagePath = $"Images/{scoreGrade.ToLower()}"; // ????? ??? ???? (Resources ???? ?? ???)
-        Sprite newSprite = Resources.Load<Sprite>(imagePath);
-
-        if (newSprite != null)
+        if (playerIndex < scoreImages.Count)
         {
-            scoreImage.sprite = newSprite; // ????? ????
-            ShowScoreImage(); // ????? ?????
-        }
-        else
-        {
-            Debug.LogWarning($"??????? ?ε??? ?? ???????: {imagePath}");
-            HideScoreImage(); // ????? ?????
+            string imagePath = $"Images/{scoreGrade.ToLower()}"; // 이미지 경로
+            Sprite newSprite = Resources.Load<Sprite>(imagePath);
+
+            if (newSprite != null)
+            {
+                scoreImages[playerIndex].sprite = newSprite;
+                ShowScoreImage();
+            }
+            else
+            {
+                Debug.LogWarning($"이미지를 찾을 수 없습니다: {imagePath}");
+                HideScoreImage();
+            }
         }
     }
-    // ?????? ???????? ??????? ???
-    string GetScoreGrade(float score)
+
+    string GetScoreGrade(float score, PlayerData playerData)
     {
         if (score >= 91)
         {
-            excellentCount++;
+            playerData.excellentCount++;
             return "Excellent";
         }
         else if (score >= 76)
         {
-            greatCount++;
+            playerData.greatCount++;
             return "Great";
         }
         else if (score >= 61)
         {
-            goodCount++;
+            playerData.goodCount++;
             return "Good";
         }
         else if (score >= 51)
         {
-            badCount++;
+            playerData.badCount++;
             return "Bad";
         }
         else
         {
-            missCount++;
+            playerData.missCount++;
             return "Miss";
         }
     }
-
+    
     string GetStarGrade(int excellentCount, int greatCount, int goodCount, int badCount, int missCount)
     {
-        // ?? ?? ???? ???? ??
-        if (missCount >= 2)
-            return "F"; // Miss? 2? ???? "F"
-        if (missCount > 0)
-            return "C"; // Miss? 1?? "C"
-        if (badCount > 0)
-            return "B"; // Bad? 1? ???? "B"
-        if (goodCount > 0)
-            return "A"; // Good? 1? ???? "A"
-        if (greatCount > 0)
-            return "S"; // Great? 1? ???? "S"
-        return "SS";
+        // SS 등급: great, good, bad, miss가 모두 0이고, excellent만 있어야 한다.
+        if (goodCount == 0 && badCount == 0 && missCount == 0 && excellentCount > 0 && greatCount == 0)
+        {
+            return "SS";
+        }
+
+        // S 등급: good, bad, miss가 모두 0이고, excellent와 great만 있어야 한다.
+        if (goodCount == 0 && badCount == 0 && missCount == 0 && excellentCount > 0 && greatCount > 0)
+        {
+            return "S";
+        }
+
+        // A 등급: good, bad, miss가 모두 0이고, excellent, great, good만 있어야 한다.
+        if (goodCount > 0 && badCount == 0 && missCount == 0 && excellentCount > 0)
+        {
+            return "A";
+        }
+
+        // B 등급: miss가 0이고, excellent, great, good, bad만 있어야 한다.
+        if (missCount == 0 && excellentCount > 0 && greatCount > 0 && goodCount > 0 && badCount > 0)
+        {
+            return "B";
+        }
+
+        // C 등급: miss가 1~2개일 경우.
+        if (missCount >= 1 && missCount <= 2)
+        {
+            return "C";
+        }
+
+        // F 등급: miss가 3개 이상일 경우.
+        if (missCount >= 3)
+        {
+            return "F";
+        }
+
+        // 그 외 모든 경우에는 기본적으로 F로 처리
+        return "F";
     }
 
-
-    void CountScoreGrades()
+    void CalculateStarScores()
     {
-        excellentCount = 0;
-        greatCount = 0;
-        goodCount = 0;
-        badCount = 0;
-        missCount = 0;
-
-        foreach (float score in scores)
+        foreach (var playerData in playerDataList)
         {
-            GetScoreGrade(score);
+            playerData.starScore = GetStarGrade(
+                playerData.excellentCount, 
+                playerData.greatCount, 
+                playerData.goodCount, 
+                playerData.badCount, 
+                playerData.missCount
+            );
         }
     }
 
@@ -234,11 +255,11 @@ public class GameManager : MonoBehaviour
 
             if (gameMode == 1)
             {
-                Debug.Log("????÷??? ???? ????");
+                Debug.Log("????¡???? ???? ????");
             }
             else if (gameMode == 2)
             {
-                Debug.Log("????÷??? ???? ????");
+                Debug.Log("????¡???? ???? ????");
             }
             else
             {
@@ -278,18 +299,34 @@ public class GameManager : MonoBehaviour
     // ???? ??? ?? ResultScene???? ?????? ???
     public void CompleteGame()
     {
-        // ?????? ???? ????
-        PlayerPrefs.SetString("StarScore", starScore);
-        PlayerPrefs.SetInt("ExcellentCount", excellentCount);
-        PlayerPrefs.SetInt("GreatCount", greatCount);
-        PlayerPrefs.SetInt("GoodCount", goodCount);
-        PlayerPrefs.SetInt("BadCount", badCount);
-        PlayerPrefs.SetInt("MissCount", missCount);
+        // PlayerCount 저장
+        PlayerPrefs.SetInt("PlayerCount", playerDataList.Count);
 
-        // ResultScene???? ???
+        CalculateStarScores();
+
+        for (int i = 0; i < playerDataList.Count; i++)
+        {
+            PlayerData playerData = playerDataList[i];
+            PlayerPrefs.SetInt($"Player{i + 1}_ExcellentCount", playerData.excellentCount);
+            PlayerPrefs.SetInt($"Player{i + 1}_GreatCount", playerData.greatCount);
+            PlayerPrefs.SetInt($"Player{i + 1}_GoodCount", playerData.goodCount);
+            PlayerPrefs.SetInt($"Player{i + 1}_BadCount", playerData.badCount);
+            PlayerPrefs.SetInt($"Player{i + 1}_MissCount", playerData.missCount);
+            PlayerPrefs.SetString($"Player{i + 1}_StarScore", playerData.starScore);
+
+            Debug.Log($"Player: {playerDataList.Count}, Loaded Scores - StarScore: {playerData.starScore}, Excellent: {playerData.excellentCount}, Great: {playerData.greatCount}, Good: {playerData.goodCount}, Bad: {playerData.badCount}, Miss: {playerData.missCount}");
+        }
+
         SceneManager.LoadScene("ResultScene");
+    }
 
-        Debug.Log($"StarScore: {starScore}, Excellent: {excellentCount}, Great: {greatCount}, Good: {goodCount}, Bad: {badCount}, Miss: {missCount}");
-
+    private class PlayerData
+    {
+        public int excellentCount = 0;
+        public int greatCount = 0;
+        public int goodCount = 0;
+        public int badCount = 0;
+        public int missCount = 0;
+        public string starScore = ""; 
     }
 }
