@@ -301,6 +301,10 @@ public class MusicSelector : MonoBehaviour
             {
                 message = "start 7";
             }
+            else if (song_id == 6)
+            {
+                message = "start 9";
+            }
             
         }
         string ip = "127.0.0.1"; // Python 서버의 IP 주소 (로컬)
