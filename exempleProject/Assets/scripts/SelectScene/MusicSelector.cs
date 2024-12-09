@@ -39,6 +39,25 @@ public class MusicSelector : MonoBehaviour
     private List<string> shortFilePaths = new List<string>(); // 1분 이하 음악 경로
     private bool isLong = true; // Long 탭일때 화면 시작
 
+    private void PrintCurrentCategoryMusic()
+    {
+        if (isLong)
+        {
+            Debug.Log("현재 Long 카테고리 음악 목록:");
+            for (int i = 0; i < longTitles.Count; i++)
+            {
+                Debug.Log($"[{i}] Title: {longTitles[i]}, Path: {longFilePaths[i]}");
+            }
+        }
+        else
+        {
+            Debug.Log("현재 Short 카테고리 음악 목록:");
+            for (int i = 0; i < shortTitles.Count; i++)
+            {
+                Debug.Log($"[{i}] Title: {shortTitles[i]}, Path: {shortFilePaths[i]}");
+            }
+        }
+    }
 
     private void Start()
     {
@@ -77,6 +96,10 @@ public class MusicSelector : MonoBehaviour
             UpdateThumbnail();
             PlayMusic();
         }));
+
+        longButton.onClick.AddListener(() => { SwitchCategory(true); PlayMusic(); PrintCurrentCategoryMusic(); });
+        shortButton.onClick.AddListener(() => { SwitchCategory(false); PlayMusic(); PrintCurrentCategoryMusic(); });
+
 
         // 버튼 이벤트 연결
         longButton.onClick.AddListener(() => { SwitchCategory(true); PlayMusic(); });
@@ -185,11 +208,13 @@ public class MusicSelector : MonoBehaviour
         if (isLong && longFilePaths.Count > currentIndex)
         {
             string musicPath = longFilePaths[currentIndex];
+            Debug.Log($"현재 선택된 Long 곡의 song_id: {currentIndex}");
             StartCoroutine(LoadAudio(musicPath));
         }
         else if (!isLong && shortFilePaths.Count > currentIndex)
         {
             string musicPath = shortFilePaths[currentIndex];
+            Debug.Log($"현재 선택된 Short 곡의 song_id: {currentIndex}");
             StartCoroutine(LoadAudio(musicPath));
         }
         else
@@ -244,6 +269,10 @@ public class MusicSelector : MonoBehaviour
             {
                 message = "start 4";
             }
+            else if (song_id == 2)
+            {
+                message = "start 8";
+            }
         }
 
         else
@@ -260,6 +289,19 @@ public class MusicSelector : MonoBehaviour
             {
                 message = "start 3";
             }
+            else if (song_id == 3)
+            {
+                message = "start 5";
+            }
+            else if (song_id == 4)
+            {
+                message = "start 6";
+            }
+            else if (song_id == 5)
+            {
+                message = "start 7";
+            }
+            
         }
         string ip = "127.0.0.1"; // Python 서버의 IP 주소 (로컬)
         int port = 25252; // Python 서버의 포트 번호
