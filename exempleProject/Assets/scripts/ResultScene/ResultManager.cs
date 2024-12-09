@@ -10,6 +10,7 @@ public class ResultManager : MonoBehaviour
 {
     public Button RetryBtn; // Retry 버튼: ChoiceGame 씬으로 이동
     public Button LobbyBtn; // Lobby 버튼: Main 씬으로 이동
+    public Button NextBtn; // Next 버튼: 결과를 넘기는 버튼
 
 
     public TextMeshProUGUI StarScore; // ExcellentCount 텍스트 UI
@@ -20,6 +21,11 @@ public class ResultManager : MonoBehaviour
     public TextMeshProUGUI MissCount;       // MissCount 텍스트 UI
 
     public Image RankImage; // 랭크에 따른 이미지 표시
+
+    public Image PlayImage; // 플레이어 수에 따른 이미지 표시
+
+    private int currentPlayerIndex = 0; // 현재 보여줄 플레이어의 인덱스
+    private List<PlayerData> playerDataList = new List<PlayerData>(); // 플레이어 데이터 리스트
 
 
     void Start()
@@ -44,59 +50,117 @@ public class ResultManager : MonoBehaviour
             LobbyBtn.onClick.AddListener(() => ChangeScene("MainScene")); // Main 씬으로 이동
         }
 
-        // PlayerPrefs로부터 데이터 로드
-        string starScore = PlayerPrefs.GetString("StarScore", "");
-        int excellentCount = PlayerPrefs.GetInt("ExcellentCount", 0);
-        int greatCount = PlayerPrefs.GetInt("GreatCount", 0);
-        int goodCount = PlayerPrefs.GetInt("GoodCount", 0);
-        int badCount = PlayerPrefs.GetInt("BadCount", 0);
-        int missCount = PlayerPrefs.GetInt("MissCount", 0);
+        // Next 버튼 이벤트 연결
+        NextBtn.onClick.AddListener(ShowNextPlayerResult);
+
+        // PlayerPrefs에서 데이터 로드
+        LoadPlayerData();
+
+        // 첫 번째 플레이어의 결과를 표시
+        ShowPlayerResult(currentPlayerIndex);
+    }
+
+    void LoadPlayerData()
+    {
+        int playerCount = PlayerPrefs.GetInt("PlayerCount", 1); // 저장된 플레이어 수 가져오기
+        Debug.Log($"PlayerCount: {playerCount}");
+
+        for (int i = 0; i < playerCount; i++)
+        {
+            int excellentCount = PlayerPrefs.GetInt($"Player{i + 1}_ExcellentCount");
+            int greatCount = PlayerPrefs.GetInt($"Player{i + 1}_GreatCount");
+            int goodCount = PlayerPrefs.GetInt($"Player{i + 1}_GoodCount");
+            int badCount = PlayerPrefs.GetInt($"Player{i + 1}_BadCount");
+            int missCount = PlayerPrefs.GetInt($"Player{i + 1}_MissCount");
+            string starScore = PlayerPrefs.GetString($"Player{i + 1}_StarScore");
+
+            Debug.Log($"Loaded Data for Player {i + 1}: Excellent {excellentCount}, Great {greatCount}, Good {goodCount}, Bad {badCount}, Miss {missCount}, StarScore: {starScore}");
+
+            PlayerData playerData = new PlayerData
+            {
+                excellentCount = excellentCount,
+                greatCount = greatCount,
+                goodCount = goodCount,
+                badCount = badCount,
+                missCount = missCount,
+                starScore = starScore
+            };
+            playerDataList.Add(playerData);
+        }
+    }
+
+    void ShowPlayerResult(int playerIndex)
+    {
+        // playerDataList가 null인지 확인
+        if (playerDataList == null)
+        {
+            Debug.LogError("playerDataList is not initialized!");
+            return;
+        }
+
+        // playerIndex가 유효한지 확인
+        if (playerIndex < 0 || playerIndex >= playerDataList.Count)
+        {
+            Debug.LogError($"Invalid playerIndex: {playerIndex}. It must be between 0 and {playerDataList.Count - 1}.");
+            return;
+        }
+
+        PlayerData playerData = playerDataList[playerIndex];
 
         // UI 업데이트
-        UpdateUI(starScore, excellentCount, greatCount, goodCount, badCount, missCount);
+        Debug.Log($"Updating UI for Player {playerIndex + 1}: StarScore: {playerData.starScore}, Excellent: {playerData.excellentCount}, Great: {playerData.greatCount}, Good: {playerData.goodCount}, Bad: {playerData.badCount}, Miss: {playerData.missCount}");
 
+        ExcellentCount.text = playerData.excellentCount.ToString();
+        GreatCount.text = playerData.greatCount.ToString();
+        GoodCount.text = playerData.goodCount.ToString();
+        BadCount.text = playerData.badCount.ToString();
+        MissCount.text = playerData.missCount.ToString();
+
+        UpdateRankImage(playerData.starScore); // 랭크 이미지 업데이트
+        UpdatePlayerImage(playerIndex+1); // 플레이어 이미지 업데이트
     }
 
-    void UpdateUI(string starScore, int excellentCount, int greatCount, int goodCount, int badCount, int missCount)
+    void ShowNextPlayerResult()
     {
-
-        if (StarScore == null) Debug.LogError("StarScore TextMeshProUGUI is not assigned!");
-        if (ExcellentCount == null) Debug.LogError("ExcellentCount TextMeshProUGUI is not assigned!");
-        if (GreatCount == null) Debug.LogError("GreatCount TextMeshProUGUI is not assigned!");
-        if (GoodCount == null) Debug.LogError("GoodCount TextMeshProUGUI is not assigned!");
-        if (BadCount == null) Debug.LogError("BadCount TextMeshProUGUI is not assigned!");
-        if (MissCount == null) Debug.LogError("MissCount TextMeshProUGUI is not assigned!");
-
-        // TextMeshPro를 사용한 UI 텍스트 갱신
-        if (StarScore != null) StarScore.text = $"{starScore}";
-        if (ExcellentCount != null) ExcellentCount.text = $"{excellentCount}";
-        if (GreatCount != null) GreatCount.text = $"{greatCount}";
-        if (GoodCount != null) GoodCount.text = $"{goodCount}";
-        if (BadCount != null) BadCount.text = $"{badCount}";
-        if (MissCount != null) MissCount.text = $"{missCount}";
-
-        Debug.Log($"Loaded Scores - StarScore: {starScore}, Excellent: {excellentCount}, Great: {greatCount}, Good: {goodCount}, Bad: {badCount}, Miss: {missCount}");
-
-        
-        UpdateRankImage(starScore); // 랭크 이미지 업데이트
-
+        currentPlayerIndex++;
+        if (currentPlayerIndex >= playerDataList.Count)
+        {
+            currentPlayerIndex = 0; // 마지막 플레이어 후 첫 번째 플레이어로 돌아가기
+        }
+        ShowPlayerResult(currentPlayerIndex);
     }
-
+    
     void UpdateRankImage(string starScore)
     {
-        
-        string imagePath = $"Images/{starScore}"; // 이미지 경로 설정 (Resources 폴더 내 경로)
+        string imagePath = $"Images/{starScore}"; // 이미지 경로 설정
         Sprite newSprite = Resources.Load<Sprite>(imagePath);
 
         if (newSprite != null)
         {
-            RankImage.sprite = newSprite; // 이미지 변경
-            ShowScoreImage(); // 이미지 보이기
+            RankImage.sprite = newSprite;
+            ShowScoreImage();
         }
         else
         {
             Debug.LogWarning($"이미지를 로드할 수 없습니다: {imagePath}");
-            HideScoreImage(); // 이미지 숨기기
+            HideScoreImage();
+        }
+    }
+
+    void UpdatePlayerImage(int player)
+    {
+        string currentPlayer = player.ToString();
+        string imagePath = $"Images/{currentPlayer}p";
+        Sprite newSprite = Resources.Load<Sprite>(imagePath);
+        if (newSprite != null)
+        {
+            PlayImage.sprite = newSprite;
+            ShowPlayerImage();
+        }
+        else
+        {
+            Debug.LogWarning($"이미지를 로드할 수 없습니다: {imagePath}");
+            HidePlayerImage();
         }
     }
 
@@ -114,9 +178,33 @@ public class ResultManager : MonoBehaviour
         RankImage.color = color;
     }
 
+    void ShowPlayerImage()
+    {
+        Color color = PlayImage.color;
+        color.a = 1; // 알파값을 1로 설정 (완전 불투명)
+        RankImage.color = color;
+    }
+
+    void HidePlayerImage()
+    {
+        Color color = PlayImage.color;
+        color.a = 0; // 알파값을 0으로 설정 (완전 투명)
+        RankImage.color = color;
+    }
+
     // 씬 변경을 처리하는 함수
     void ChangeScene(string sceneName)
     {
         SceneManager.LoadScene(sceneName);
+    }
+
+    private class PlayerData
+    {
+        public int excellentCount = 0;
+        public int greatCount = 0;
+        public int goodCount = 0;
+        public int badCount = 0;
+        public int missCount = 0;
+        public string starScore = ""; 
     }
 }
