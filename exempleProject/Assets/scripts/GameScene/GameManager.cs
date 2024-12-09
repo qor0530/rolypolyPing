@@ -37,7 +37,7 @@ public class GameManager : MonoBehaviour
         PlayerPrefs.Save();
         PrintAllPlayerPrefs();
 
-        InitializePlayerData(1);
+        InitializePlayerData(3);
 
         HideScoreImage();
         
