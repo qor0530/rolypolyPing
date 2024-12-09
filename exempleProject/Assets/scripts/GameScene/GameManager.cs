@@ -15,15 +15,15 @@ using UnityEngine.Networking; // UnityWebRequest?? ???????? ???
 public class GameManager : MonoBehaviour
 {
     public Button completeGameButton; // ???? ??? ???
-    public List<Image> scoreImages; // ½Ç½Ã°£ Æò°¡¸¦ Ç¥½ÃÇÒ ÀÌ¹ÌÁö ¸®½ºÆ®
-    private List<PlayerData> playerDataList = new List<PlayerData>(); // °¢ »ç¿ëÀÚÀÇ Æò°¡ µ¥ÀÌÅÍ¸¦ ÀúÀå
+    public List<Image> scoreImages; // ï¿½Ç½Ã°ï¿½ ï¿½ò°¡¸ï¿½ Ç¥ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®
+    private List<PlayerData> playerDataList = new List<PlayerData>(); // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½
 
     private List<float> scores = new List<float>(); // 3?? ???????? ?????? ???? ?????
 
     public AudioSource audioSource;
-    
-    private float lastScoreUpdateTime = 0f; // ¸¶Áö¸· Á¡¼ö °»½Å ½Ã°£
-    private float scoreUpdateInterval = 1.5f; // Á¡¼ö °»½Å °£°Ý
+
+    private float lastScoreUpdateTime = 0f; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½
+    private float scoreUpdateInterval = 1.5f; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
     void Start()
     {
@@ -40,7 +40,7 @@ public class GameManager : MonoBehaviour
         InitializePlayerData(3);
 
         HideScoreImage();
-        
+
         completeGameButton.onClick.AddListener(CompleteGame);
     }
 
@@ -54,8 +54,8 @@ public class GameManager : MonoBehaviour
                 for (int i = 0; i < playerDataList.Count; i++)
                 {
                     if (i < UDPReceiver.Instance.LatestScores.Count)
-                    {   
-                        float latestScore = UDPReceiver.Instance.LatestScores[i+1];
+                    {
+                        float latestScore = UDPReceiver.Instance.LatestScores[i + 1];
                         PlayerData playerData = playerDataList[i];
 
                         string scoreGrade = GetScoreGrade(latestScore, playerData);
@@ -63,7 +63,7 @@ public class GameManager : MonoBehaviour
                     }
                 }
             }
-            // ¸¶Áö¸· Á¡¼ö °»½Å ½Ã°£À» ÇöÀç ½Ã°£À¸·Î ¾÷µ¥ÀÌÆ®
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®
             lastScoreUpdateTime = currentTime;
         }
     }
@@ -105,7 +105,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // ÇÃ·¹ÀÌ¾î µ¥ÀÌÅÍ¸¦ ÃÊ±âÈ­
+    // ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½Ê±ï¿½È­
     void InitializePlayerData(int playerCount)
     {
         for (int i = 0; i < playerCount; i++)
@@ -134,7 +134,7 @@ public class GameManager : MonoBehaviour
             if (scoreImage != null)
             {
                 Color color = scoreImage.color;
-                color.a = 0; // ¾ËÆÄ°ªÀ» 0À¸·Î ¼³Á¤ÇÏ¿© ¼û±è
+                color.a = 0; // ï¿½ï¿½ï¿½Ä°ï¿½ï¿½ï¿½ 0ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ï¿½
                 scoreImage.color = color;
             }
         }
@@ -144,7 +144,7 @@ public class GameManager : MonoBehaviour
     {
         if (playerIndex < scoreImages.Count)
         {
-            string imagePath = $"Images/{scoreGrade.ToLower()}"; // ÀÌ¹ÌÁö °æ·Î
+            string imagePath = $"Images/{scoreGrade.ToLower()}"; // ï¿½Ì¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
             Sprite newSprite = Resources.Load<Sprite>(imagePath);
 
             if (newSprite != null)
@@ -154,7 +154,7 @@ public class GameManager : MonoBehaviour
             }
             else
             {
-                Debug.LogWarning($"ÀÌ¹ÌÁö¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù: {imagePath}");
+                Debug.LogWarning($"ï¿½Ì¹ï¿½ï¿½ï¿½ï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½: {imagePath}");
                 HideScoreImage();
             }
         }
@@ -188,46 +188,46 @@ public class GameManager : MonoBehaviour
             return "Miss";
         }
     }
-    
+
     string GetStarGrade(int excellentCount, int greatCount, int goodCount, int badCount, int missCount)
     {
-        // SS µî±Þ: great, good, bad, miss°¡ ¸ðµÎ 0ÀÌ°í, excellent¸¸ ÀÖ¾î¾ß ÇÑ´Ù.
+        // SS ï¿½ï¿½ï¿½: great, good, bad, missï¿½ï¿½ ï¿½ï¿½ï¿½ 0ï¿½Ì°ï¿½, excellentï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ ï¿½Ñ´ï¿½.
         if (goodCount == 0 && badCount == 0 && missCount == 0 && excellentCount > 0 && greatCount == 0)
         {
             return "SS";
         }
 
-        // S µî±Þ: good, bad, miss°¡ ¸ðµÎ 0ÀÌ°í, excellent¿Í great¸¸ ÀÖ¾î¾ß ÇÑ´Ù.
+        // S ï¿½ï¿½ï¿½: good, bad, missï¿½ï¿½ ï¿½ï¿½ï¿½ 0ï¿½Ì°ï¿½, excellentï¿½ï¿½ greatï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ ï¿½Ñ´ï¿½.
         if (goodCount == 0 && badCount == 0 && missCount == 0 && excellentCount > 0 && greatCount > 0)
         {
             return "S";
         }
 
-        // A µî±Þ: good, bad, miss°¡ ¸ðµÎ 0ÀÌ°í, excellent, great, good¸¸ ÀÖ¾î¾ß ÇÑ´Ù.
+        // A ï¿½ï¿½ï¿½: good, bad, missï¿½ï¿½ ï¿½ï¿½ï¿½ 0ï¿½Ì°ï¿½, excellent, great, goodï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ ï¿½Ñ´ï¿½.
         if (goodCount > 0 && badCount == 0 && missCount == 0 && excellentCount > 0)
         {
             return "A";
         }
 
-        // B µî±Þ: miss°¡ 0ÀÌ°í, excellent, great, good, bad¸¸ ÀÖ¾î¾ß ÇÑ´Ù.
+        // B ï¿½ï¿½ï¿½: missï¿½ï¿½ 0ï¿½Ì°ï¿½, excellent, great, good, badï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ ï¿½Ñ´ï¿½.
         if (missCount == 0 && excellentCount > 0 && greatCount > 0 && goodCount > 0 && badCount > 0)
         {
             return "B";
         }
 
-        // C µî±Þ: miss°¡ 1~2°³ÀÏ °æ¿ì.
+        // C ï¿½ï¿½ï¿½: missï¿½ï¿½ 1~2ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½.
         if (missCount >= 1 && missCount <= 2)
         {
             return "C";
         }
 
-        // F µî±Þ: miss°¡ 3°³ ÀÌ»óÀÏ °æ¿ì.
+        // F ï¿½ï¿½ï¿½: missï¿½ï¿½ 3ï¿½ï¿½ ï¿½Ì»ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½.
         if (missCount >= 3)
         {
             return "F";
         }
 
-        // ±× ¿Ü ¸ðµç °æ¿ì¿¡´Â ±âº»ÀûÀ¸·Î F·Î Ã³¸®
+        // ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ì¿¡ï¿½ï¿½ ï¿½âº»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Fï¿½ï¿½ Ã³ï¿½ï¿½
         return "F";
     }
 
@@ -236,10 +236,10 @@ public class GameManager : MonoBehaviour
         foreach (var playerData in playerDataList)
         {
             playerData.starScore = GetStarGrade(
-                playerData.excellentCount, 
-                playerData.greatCount, 
-                playerData.goodCount, 
-                playerData.badCount, 
+                playerData.excellentCount,
+                playerData.greatCount,
+                playerData.goodCount,
+                playerData.badCount,
                 playerData.missCount
             );
         }
@@ -255,11 +255,11 @@ public class GameManager : MonoBehaviour
 
             if (gameMode == 1)
             {
-                Debug.Log("????¢®???? ???? ????");
+                Debug.Log("????ï¿½ï¿½???? ???? ????");
             }
             else if (gameMode == 2)
             {
-                Debug.Log("????¢®???? ???? ????");
+                Debug.Log("????ï¿½ï¿½???? ???? ????");
             }
             else
             {
@@ -299,7 +299,7 @@ public class GameManager : MonoBehaviour
     // ???? ??? ?? ResultScene???? ?????? ???
     public void CompleteGame()
     {
-        // PlayerCount ÀúÀå
+        // PlayerCount ï¿½ï¿½ï¿½ï¿½
         PlayerPrefs.SetInt("PlayerCount", playerDataList.Count);
 
         CalculateStarScores();
@@ -327,6 +327,6 @@ public class GameManager : MonoBehaviour
         public int goodCount = 0;
         public int badCount = 0;
         public int missCount = 0;
-        public string starScore = ""; 
+        public string starScore = "";
     }
 }
