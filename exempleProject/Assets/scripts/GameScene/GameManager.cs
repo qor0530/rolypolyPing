@@ -49,6 +49,7 @@ public class GameManager : MonoBehaviour
         // ???? ??? ??? ??? ???? ????
         completeGameButton.onClick.AddListener(CompleteGame);
 
+<<<<<<< Updated upstream
         // ?????? ??ð? ???????
         HideScoreImage();
         StartCoroutine(UpdateScore());
@@ -105,6 +106,10 @@ public class GameManager : MonoBehaviour
         Color color = scoreImage.color;
         color.a = 0; // ??????? 0???? ???? (???? ????)
         scoreImage.color = color;
+=======
+        // 점수를 실시간 업데이트
+        //StartCoroutine(UpdateScore());
+>>>>>>> Stashed changes
     }
 
     IEnumerator UpdateScore()
@@ -113,11 +118,19 @@ public class GameManager : MonoBehaviour
         {
             // scores.Clear(); // ???ο? 3?? ?????? ???? ????? ????
 
+<<<<<<< Updated upstream
             // UDPReceiver???? ??? ???? ????????
             if (UDPReceiver.Instance != null && UDPReceiver.Instance.LatestCoord3Ds.Count != 0)
             {
                 float latestScore = UDPReceiver.Instance.LatestScores[1];
                 // ?????? ??????? ??????? ??? ??? ????
+=======
+            // UDPReceiver에서 최신 점수 가져오기
+            if (UDPReceiver.Instance != null && UDPReceiver.Instance.LatestCoord3Ds[1] != null)
+            {
+                float latestScore = UDPReceiver.Instance.LatestScores[1];
+                scores.Add(latestScore);
+>>>>>>> Stashed changes
                 totalScore += latestScore;
                 totalScoreCount++;
 

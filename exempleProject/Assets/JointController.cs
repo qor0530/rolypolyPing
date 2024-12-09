@@ -41,9 +41,17 @@ public class JointController : MonoBehaviour
     };
     void Update()
     {
+<<<<<<< Updated upstream
         if (UDPReceiver.Instance != null)
         {
             try
+=======
+        if (UDPReceiver.Instance != null && UDPReceiver.Instance.LatestCoord3Ds[1].Count >= mappedLandmarks.Length)
+        {
+            var coord3D = UDPReceiver.Instance.LatestCoord3Ds[1];
+
+            for (int i = 0; i < mappedLandmarks.Length; i++)
+>>>>>>> Stashed changes
             {
                 var coord3D = UDPReceiver.Instance.LatestCoord3Ds[avata_id];    
                 for (int i = 0; i < 33; i++)

@@ -1,0 +1,138 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed9e29f89a78cc04e80d0307c72c4faa, type: 3}
+  m_Name: C_data
+  m_EditorClassIdentifier: 
+  note: 
+  parentCalibrationData:
+  - bone: 14
+    data:
+      parentn: man_basketball_player/Main/DeformationSystem/Root_M/Spine1_M/Chest_M/Scapula_R/Shoulder_R/
+      childn: man_basketball_player/Main/DeformationSystem/Root_M/Spine1_M/Chest_M/Scapula_R/Shoulder_R/Elbow_R/
+      tparentn: PipeServer/Body Parent/RIGHT_SHOULDER/
+      tchildn: PipeServer/Body Parent/RIGHT_ELBOW/
+      initialDir: {x: -0.83666813, y: 0.08312977, z: -0.54136485}
+      initialRotation: {x: -0.66490996, y: 0.03988245, z: 0.035594583, w: 0.74500823}
+      targetRotation: {x: 0, y: 0, z: 0, w: 0}
+  - bone: 16
+    data:
+      parentn: man_basketball_player/Main/DeformationSystem/Root_M/Spine1_M/Chest_M/Scapula_R/Shoulder_R/Elbow_R/
+      childn: man_basketball_player/Main/DeformationSystem/Root_M/Spine1_M/Chest_M/Scapula_R/Shoulder_R/Elbow_R/Wrist_R/
+      tparentn: PipeServer/Body Parent/RIGHT_ELBOW/
+      tchildn: PipeServer/Body Parent/RIGHT_WRIST/
+      initialDir: {x: -0.56339705, y: -0.2682021, z: -0.78144187}
+      initialRotation: {x: -0.66449845, y: -0.046235085, z: -0.060821027, w: 0.743374}
+      targetRotation: {x: 0, y: 0, z: 0, w: 0}
+  - bone: 2
+    data:
+      parentn: man_basketball_player/Main/DeformationSystem/Root_M/Hip_R/
+      childn: man_basketball_player/Main/DeformationSystem/Root_M/Hip_R/Knee_R/
+      tparentn: PipeServer/Body Parent/RIGHT_HIP/
+      tchildn: PipeServer/Body Parent/RIGHT_KNEE/
+      initialDir: {x: -0.004580676, y: -0.98828495, z: -0.15255113}
+      initialRotation: {x: 0.47705996, y: 0.5176254, z: -0.4641047, w: -0.5376661}
+      targetRotation: {x: 0, y: 0, z: 0, w: 0}
+  - bone: 4
+    data:
+      parentn: man_basketball_player/Main/DeformationSystem/Root_M/Hip_R/Knee_R/
+      childn: man_basketball_player/Main/DeformationSystem/Root_M/Hip_R/Knee_R/Ankle_R/
+      tparentn: PipeServer/Body Parent/RIGHT_KNEE/
+      tchildn: PipeServer/Body Parent/RIGHT_ANKLE/
+      initialDir: {x: 0.0571296, y: -0.8345757, z: 0.547923}
+      initialRotation: {x: 0.5578425, y: 0.4293414, z: -0.5484689, w: -0.45128688}
+      targetRotation: {x: 0, y: 0, z: 0, w: 0}
+  - bone: 13
+    data:
+      parentn: man_basketball_player/Main/DeformationSystem/Root_M/Spine1_M/Chest_M/Scapula_L/Shoulder_L/
+      childn: man_basketball_player/Main/DeformationSystem/Root_M/Spine1_M/Chest_M/Scapula_L/Shoulder_L/Elbow_L/
+      tparentn: PipeServer/Body Parent/LEFT_SHOULDER/
+      tchildn: PipeServer/Body Parent/LEFT_ELBOW/
+      initialDir: {x: 0.7726257, y: -0.40328267, z: -0.49031883}
+      initialRotation: {x: 0.7450082, y: -0.0355946, z: 0.039882425, w: 0.66490996}
+      targetRotation: {x: 0, y: 0, z: 0, w: 0}
+  - bone: 15
+    data:
+      parentn: man_basketball_player/Main/DeformationSystem/Root_M/Spine1_M/Chest_M/Scapula_L/Shoulder_L/Elbow_L/
+      childn: man_basketball_player/Main/DeformationSystem/Root_M/Spine1_M/Chest_M/Scapula_L/Shoulder_L/Elbow_L/Wrist_L/
+      tparentn: PipeServer/Body Parent/LEFT_ELBOW/
+      tchildn: PipeServer/Body Parent/LEFT_WRIST/
+      initialDir: {x: 0.79499704, y: 0.06140307, z: -0.6034975}
+      initialRotation: {x: 0.743374, y: 0.060821045, z: -0.046235062, w: 0.66449845}
+      targetRotation: {x: 0, y: 0, z: 0, w: 0}
+  - bone: 1
+    data:
+      parentn: man_basketball_player/Main/DeformationSystem/Root_M/Hip_L/
+      childn: man_basketball_player/Main/DeformationSystem/Root_M/Hip_L/Knee_L/
+      tparentn: PipeServer/Body Parent/LEFT_HIP/
+      tchildn: PipeServer/Body Parent/LEFT_KNEE/
+      initialDir: {x: -0.15034111, y: -0.9885754, z: -0.0107837105}
+      initialRotation: {x: 0.537666, y: -0.4641047, z: -0.5176254, w: 0.47706}
+      targetRotation: {x: 0, y: 0, z: 0, w: 0}
+  - bone: 3
+    data:
+      parentn: man_basketball_player/Main/DeformationSystem/Root_M/Hip_L/Knee_L/
+      childn: man_basketball_player/Main/DeformationSystem/Root_M/Hip_L/Knee_L/Ankle_L/
+      tparentn: PipeServer/Body Parent/LEFT_KNEE/
+      tchildn: PipeServer/Body Parent/LEFT_ANKLE/
+      initialDir: {x: 0.03797861, y: -0.8629903, z: 0.503791}
+      initialRotation: {x: 0.45128688, y: -0.5484689, z: -0.4293414, w: 0.55784243}
+      targetRotation: {x: 0, y: 0, z: 0, w: 0}
+  - bone: 5
+    data:
+      parentn: man_basketball_player/Main/DeformationSystem/Root_M/Hip_L/Knee_L/Ankle_L/
+      childn: man_basketball_player/Main/DeformationSystem/Root_M/Hip_L/Knee_L/Ankle_L/Toes_L/
+      tparentn: PipeServer/Body Parent/LEFT_ANKLE/
+      tchildn: PipeServer/Body Parent/LEFT_FOOT_INDEX/
+      initialDir: {x: 0.020052487, y: -0.59442115, z: -0.8039039}
+      initialRotation: {x: 0.49524856, y: -0.49524853, z: -0.50470686, w: 0.5047068}
+      targetRotation: {x: 0, y: 0, z: 0, w: 0}
+  - bone: 6
+    data:
+      parentn: man_basketball_player/Main/DeformationSystem/Root_M/Hip_R/Knee_R/Ankle_R/
+      childn: man_basketball_player/Main/DeformationSystem/Root_M/Hip_R/Knee_R/Ankle_R/Toes_R/
+      tparentn: PipeServer/Body Parent/RIGHT_ANKLE/
+      tchildn: PipeServer/Body Parent/RIGHT_FOOT_INDEX/
+      initialDir: {x: 0.21931562, y: -0.86461276, z: -0.45204583}
+      initialRotation: {x: 0.5047068, y: 0.50470686, z: -0.49524853, w: -0.49524856}
+      targetRotation: {x: 0, y: 0, z: 0, w: 0}
+  spineUpDown:
+    parentn: man_basketball_player/Main/DeformationSystem/Root_M/Spine1_M/
+    childn: man_basketball_player/Main/DeformationSystem/Root_M/Spine1_M/Chest_M/Neck_M/
+    tparentn: VirtualHip/
+    tchildn: VirtualNeck/
+    initialDir: {x: 0.027053287, y: 0.9705552, z: -0.2393551}
+    initialRotation: {x: -0.5120884, y: 0.48761204, z: -0.5120884, w: 0.48761204}
+    targetRotation: {x: 0, y: 0, z: 0, w: 0}
+  hipsTwist:
+    parentn: man_basketball_player/Main/DeformationSystem/Root_M/
+    childn: man_basketball_player/Main/DeformationSystem/Root_M/
+    tparentn: PipeServer/Body Parent/RIGHT_HIP/
+    tchildn: PipeServer/Body Parent/LEFT_HIP/
+    initialDir: {x: 0.9688738, y: -0.08891187, z: -0.23103736}
+    initialRotation: {x: -0.49605373, y: 0.5039154, z: -0.49605373, w: 0.5039154}
+    targetRotation: {x: 0, y: 0, z: 0, w: 0}
+  chest:
+    parentn: man_basketball_player/Main/DeformationSystem/Root_M/Spine1_M/Chest_M/
+    childn: man_basketball_player/Main/DeformationSystem/Root_M/Spine1_M/Chest_M/
+    tparentn: PipeServer/Body Parent/RIGHT_HIP/
+    tchildn: PipeServer/Body Parent/LEFT_HIP/
+    initialDir: {x: 0.9688738, y: -0.08891187, z: -0.23103736}
+    initialRotation: {x: -0.45596668, y: 0.54045767, z: -0.45596668, w: 0.54045767}
+    targetRotation: {x: 0, y: 0, z: 0, w: 0}
+  head:
+    parentn: man_basketball_player/Main/DeformationSystem/Root_M/Spine1_M/Chest_M/Neck_M/
+    childn: man_basketball_player/Main/DeformationSystem/Root_M/Spine1_M/Chest_M/Neck_M/Head_M/
+    tparentn: VirtualNeck/
+    tchildn: PipeServer/Body Parent/NOSE/
+    initialDir: {x: 0.14354563, y: 0.4071241, z: -0.90202254}
+    initialRotation: {x: -0.4986895, y: 0.50130725, z: -0.4986895, w: 0.50130725}
+    targetRotation: {x: 0, y: 0, z: 0, w: 0}
